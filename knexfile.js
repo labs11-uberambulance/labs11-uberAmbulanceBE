@@ -7,15 +7,18 @@ const localPgConnection = {
   user: "postgres",
   password: process.env.TESTPW
 };
+const localDevConnection ={
+  host: "localhost",
+  database: "BR-dev-db",
+  user: "postgres",
+  password: process.env.TESTPW
+}
 const prodDbConnection = process.env.DATABASE_URL || localPgConnection;
 module.exports = {
-
   development: {
-    client: 'sqlite3',
-    connection: {
-      filename: './data/birthrider_db.sqlite3'
-    },
-    useNullAsDefault: true,
+    client: 'postgresql',
+    connection: localDevConnection,
+    useNullAsDefault: true
   },
   testing: {
     client: 'postgresql',
