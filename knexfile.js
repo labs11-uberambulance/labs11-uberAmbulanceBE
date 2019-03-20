@@ -3,13 +3,13 @@ require('dotenv').config();
 const localPgConnection = {
   // placeholder since there is no pg locally
   host: "localhost",
-  database: "BR-test-db",
+  database: "postgres",
   user: "postgres",
   password: process.env.TESTPW
 };
 const localDevConnection ={
   host: "localhost",
-  database: "BR-dev-db",
+  database: "postgres",
   user: "postgres",
   password: process.env.TESTPW
 }
