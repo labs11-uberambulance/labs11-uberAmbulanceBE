@@ -1,0 +1,34 @@
+{
+  "name": "labs11-uberAmbulanceBE",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cors": "^2.8.5",
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4",
+    "helmet": "^3.16.0",
+    "knex": "^0.16.3",
+    "nodemon": "^1.18.10",
+    "pg": "^7.9.0"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0",
+    "jest": "^24.5.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/labs11-uberambulance/labs11-uberAmbulanceBE.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/labs11-uberambulance/labs11-uberAmbulanceBE/issues"
+  },
+  "homepage": "https://github.com/labs11-uberambulance/labs11-uberAmbulanceBE#readme"
+}
