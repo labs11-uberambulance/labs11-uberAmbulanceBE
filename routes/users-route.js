@@ -2,7 +2,6 @@ const Users = require('../models/user-model.js');
 module.exports= server =>{
     server.get('/api/users', getUsersTest);
     server.post('/api/users', addUser);
-
 }
 
 const getUsersTest = (req, res) =>{
@@ -15,8 +14,8 @@ const getUsersTest = (req, res) =>{
     })
 }
 
-
 const addUser = (req, res) =>{
+    console.log(req.header.authorization)
     Users.add(req.body)
     .then(data =>{
         res.status(201).json(data)
