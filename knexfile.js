@@ -13,7 +13,6 @@ const localDevConnection ={
   user: "postgres",
   password: process.env.TESTPW
 }
-const prodDbConnection = process.env.DATABASE_URL || localPgConnection;
 
 
 module.exports = {
@@ -35,7 +34,7 @@ module.exports = {
   },
   production: {
     client: "postgresql",
-    connection: prodDbConnection,
+    connection: process.env.DATABASE_URL,
     migrations: {
       directory: "./migrations"
     },
