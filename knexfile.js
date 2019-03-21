@@ -9,7 +9,7 @@ const localPgConnection = {
 };
 const localDevConnection ={
   host: "localhost",
-  database: "BR-dev-db",
+  database: "BR-dev-db-1",
   user: "postgres",
   password: process.env.TESTPW
 }
