@@ -4,7 +4,7 @@ exports.up = function(knex, Promise) {
         tbl.increments('id').primary();
         tbl.string("name", 255).notNullable();
         tbl.string("email", 255);
-        tbl.string("google_id", 500).notNullable();
+        tbl.string("google_id", 500).notNullable().unique();
         tbl.integer("phone")
         tbl.enum('user_type', ['mothers', 'drivers', 'caretakers']).notNullable()
     })
