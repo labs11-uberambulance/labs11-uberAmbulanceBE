@@ -14,6 +14,8 @@ const localDevConnection ={
   password: process.env.TESTPW
 }
 const prodDbConnection = process.env.DATABASE_URL || localPgConnection;
+
+
 module.exports = {
   development: {
     client: 'postgresql',
@@ -32,14 +34,13 @@ module.exports = {
     }
   },
   production: {
-    client: 'postgresql',
+    client: "postgresql",
     connection: prodDbConnection,
-    pool: {
-      min: 2,
-      max: 10
-    },
     migrations: {
-      tableName: 'knex_migrations'
-    }
+      directory: "./migrations"
+    },
+    // seeds: {
+    //   directory: "./seeds"
+    // }
   }
-};
+}
