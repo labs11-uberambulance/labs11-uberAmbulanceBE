@@ -1,10 +1,10 @@
 const Users = require('../models/user-model.js');
 module.exports= server =>{
-    server.get('/api/users', getUsersTest);
+    server.get('/api/users', getUsers);
     server.post('/api/users', addUser);
 }
 
-const getUsersTest = (req, res) =>{
+const getUsers = (req, res) =>{
     Users.find()
     .then(data =>{
         res.status(200).json(data)

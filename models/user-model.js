@@ -5,6 +5,9 @@ module.exports = {
     find,
     findBy,
     findById,
+    findByUserType,
+    findMothers,
+    findDrivers
   };
   function find() {
     return db('users').select('id', 'name');
@@ -12,12 +15,44 @@ module.exports = {
   function findBy(filter) {
     return db('users').where(filter);
   }
+  async function findMothers(){
+    try {
+      const moms = await db('users').where({user_type: "mothers"})
+      const mothers = moms.map(element => {
+        return findByUserType(element)
+      });
+      return mothers 
+    } catch (error) {
+      throw new Error("Could not find any mothers")
+    }
+  }
+  async function findDrivers(){
+    try {
+      const driv = await db('users').where({user_type: "drivers"})
+      const drivers = driv.map(element => {
+        return findByUserType(element)
+      });
+      return drivers 
+    } catch (error) {
+      throw new Error("Could not find any mothers")
+    }
+  }
+  async function findByUserType(user){
+    try {
+      const google_id = user.google_id
+      const type = user.user_type
+      const userTypeData = await db(`${type}`).where({google_id}).first()
+      return {user, userTypeData}
+    } catch (error) {
+      throw new Error("Could not retrieve usertype information");
+    }
+  }
   async function add(user) {
     const [id] = await db('users').insert(user);
     return findById(id);
   }
   function findById(id) {
-    return db('users').select('id', 'username', 'email', 'org_name')
+    return db('users').select('id', 'name', 'phone')
       .where({ id })
       .first();
   }
