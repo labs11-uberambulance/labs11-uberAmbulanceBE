@@ -74,8 +74,8 @@ function remove(id){
 
 async function register(user){
   const [id] = await db("users").insert(user, "id");
-  const user = await db("users").where({id})
-  return user
+  const registered = await db("users").where({id})
+  return registered
 }
 
 

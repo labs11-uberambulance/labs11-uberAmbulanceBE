@@ -20,7 +20,7 @@ env:
   global:
     - TESTPW=''
 script:
-  - nohup npm run start &
+  - nohup &
   - knex migrate:latest --env testing
   - knex seed:run --env testing
   - sleep 3
