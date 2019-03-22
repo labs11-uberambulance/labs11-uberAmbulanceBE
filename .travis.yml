@@ -15,7 +15,7 @@ cache:
 install:
   - npm install
 before_script:
-  - psql -c 'create database BR-test-db;' -U postgres
+  - psql -c 'create database "BR-test-db";' -U postgres
 env:
   global:
     - TESTPW=''
