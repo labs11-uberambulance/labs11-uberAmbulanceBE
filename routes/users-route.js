@@ -1,4 +1,5 @@
 const Users = require('../models/user-model.js');
+
 module.exports= server =>{
     server.get('/api/users', getUsers);
     server.get('/api/mothers', getMothers);

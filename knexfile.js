@@ -14,7 +14,6 @@ const localDevConnection ={
   password: process.env.TESTPW
 }
 
-
 module.exports = {
   development: {
     client: 'postgresql',
