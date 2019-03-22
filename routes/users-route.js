@@ -24,4 +24,14 @@ router.post("/", (req, res) => {
     });
 });
 
+router.delete('/:id', (req, res) => {
+    Users.remove(req.params.id)
+    .then(deleted =>{
+        res.status(202).json({message: "User Deleted"})
+    })
+    .catch(err =>{
+        res.status(500).json({message: "failed to delete user", error: err})
+    })
+});
+
 module.exports = router;

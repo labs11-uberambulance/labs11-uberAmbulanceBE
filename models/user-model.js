@@ -7,7 +7,8 @@ module.exports = {
   findById,
   findByUserType,
   findMothers,
-  findDrivers
+  findDrivers,
+  remove
 };
 function find() {
   return db("users").select("id", "name");
@@ -60,4 +61,13 @@ async function findById(id) {
     .first();
   console.log(user);
   return user;
+}
+
+function remove(id){
+  return db('users').where({"id":id}).del()
+}
+
+// Registration and Login 
+async function registerUser(fb_id){
+  
 }
