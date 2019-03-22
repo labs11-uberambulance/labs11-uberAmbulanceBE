@@ -2,6 +2,8 @@
 const router = require("express").Router();
 const Users = require("../models/user-model.js");
 // base url is /api/users, set in server.js
+const jwt = require('jsonwebtoken');
+const secret = process.env.JWT_SECRET ; 
 
 router.get("/", (req, res) => {
   Users.find()
@@ -23,7 +25,6 @@ router.post("/", (req, res) => {
       res.status(500).json({ message: ` Failed to add user`, error: err });
     });
 });
-
 router.delete('/:id', (req, res) => {
     Users.remove(req.params.id)
     .then(deleted =>{
@@ -33,5 +34,36 @@ router.delete('/:id', (req, res) => {
         res.status(500).json({message: "failed to delete user", error: err})
     })
 });
+function generateToken(user){
+  const payload = {
+      id: user.id
+  };
+  const options ={
+      expiresIn: '24h'
+  };
+  return jwt.sign(payload, options)
+}
+
+router.post('/register', (req, res) => {
+    Users.register(req.body)
+    .then(data =>{
+        res.status(201).json({token:generateToken(data), user: data, message:"registered"})
+    })
+    .catch(err=>{
+        res.status(500).json({message: "there was an error registering your user", error: err})
+    })
+});
+
+// response = {
+//     user: {
+//       id: firebaseId,
+//       photoURL: photoURL,
+//       email: email,
+//       phoneNumber: phoneNumber
+//     },
+//     token: '',
+//     tokenExpiration: 60
+//   }
+
 
 module.exports = router;

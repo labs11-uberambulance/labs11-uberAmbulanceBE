@@ -5,8 +5,8 @@ exports.up = function(knex, Promise) {
         tbl.string("name", 255);
         tbl.string("login", 255);
         tbl.string("google_id", 500).notNullable().unique();
-        tbl.integer("phone").notNullable()
-        tbl.enum('user_type', ['mothers', 'drivers']).notNullable()
+        tbl.integer("phone");
+        tbl.enum('user_type', ['mothers', 'drivers']);
     })
 };
 

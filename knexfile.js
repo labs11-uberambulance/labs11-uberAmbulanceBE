@@ -22,7 +22,7 @@ module.exports = {
   },
   testing: {
     client: 'postgresql',
-    connection: localPgConnection,
+    connection: process.env.LOCAL ? localPgConnection : process.env.DATABASE_URL,
     pool: {
       min: 2,
       max: 10
