@@ -18,7 +18,7 @@ before_script:
   - psql -c 'create database "BR-test-db";' -U postgres
 env:
   global:
-    - TESTPW=''
+    - TESTPW='' DB_ENV=testing
 script:
   - nohup &
   - knex migrate:latest --env testing
