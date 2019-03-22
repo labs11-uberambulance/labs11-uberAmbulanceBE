@@ -23,6 +23,7 @@
   },
   "scripts": {
     "test": "cross-env DB_ENV=testing jest --watch --verbose",
+    "ci-test": "jest",
     "start": "node index.js",
     "server": "nodemon index.js"
   },

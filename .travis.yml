@@ -21,10 +21,10 @@ env:
     - TESTPW=''
 script:
   - nohup npm run start &
-  - knex migrate:latest
-  - knex seed:run
+  - knex migrate:latest --env testing
+  - knex seed:run --env testing
   - sleep 3
-  - npm run test #when we add test uncomment
+  - npm run ci-test #when we add test uncomment
 notifications:
   email:
     on_failure: change
