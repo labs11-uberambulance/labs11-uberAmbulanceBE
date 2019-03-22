@@ -23,7 +23,7 @@
   },
   "scripts": {
     "test": "cross-env DB_ENV=testing jest --watch --verbose",
-    "ci-test": "jest",
+    "ci-test": "jest`--detectOpenHandles --forceExit`",
     "start": "node index.js",
     "server": "nodemon index.js"
   },
