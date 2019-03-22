@@ -34,7 +34,7 @@ module.exports = {
       });
       return drivers 
     } catch (error) {
-      throw new Error("Could not find any mothers")
+      throw new Error("Could not find any drivers")
     }
   }
   async function findByUserType(user){
