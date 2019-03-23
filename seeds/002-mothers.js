@@ -24,6 +24,6 @@ exports.seed = async function(knex, Promise) {
       };
     }
   );
-  console.log(mothersUsers[1]);
+  // console.log(mothersUsers[1]);
   return knex("mothers").insert(mothersUsers);
 };
