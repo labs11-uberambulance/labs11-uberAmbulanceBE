@@ -7,8 +7,15 @@ const secret = process.env.JWT_SECRET;
 // filter parameter is optional, will select users by user_type
 router.get("/:user_type?", (req, res) => {
   const user_type = req.params.user_type;
-  if (user_type) {
-    // Users.findBy({ user_type })
+  if (!user_type) {
+    Users.find()
+      .then(data => {
+        res.status(200).json(data);
+      })
+      .catch(err => {
+        res.status(500).json({ message: ` Failed to get Users`, error: err });
+      });
+  } else if (user_type === "mothers") {
     Users.findMothers()
       .then(data => {
         res.status(200).json(data);
@@ -18,14 +25,18 @@ router.get("/:user_type?", (req, res) => {
           .status(500)
           .json({ message: ` Failed to get UsersBy ${user_type}`, error: err });
       });
-  } else {
-    Users.find()
+  } else if (user_type === "drivers") {
+    Users.findDrivers()
       .then(data => {
         res.status(200).json(data);
       })
       .catch(err => {
-        res.status(500).json({ message: ` Failed to get Users`, error: err });
+        res
+          .status(500)
+          .json({ message: ` Failed to get UsersBy ${user_type}`, error: err });
       });
+  } else {
+    res.status(404).json({ message: `no ${user_type} user type` });
   }
 });
 
@@ -61,21 +72,17 @@ function generateToken(user) {
 router.post("/register", (req, res) => {
   Users.register(req.body)
     .then(data => {
-      res
-        .status(201)
-        .json({
-          token: generateToken(data),
-          user: data,
-          message: "registered"
-        });
+      res.status(201).json({
+        token: generateToken(data),
+        user: data,
+        message: "registered"
+      });
     })
     .catch(err => {
-      res
-        .status(500)
-        .json({
-          message: "there was an error registering your user",
-          error: err
-        });
+      res.status(500).json({
+        message: "there was an error registering your user",
+        error: err
+      });
     });
 });
 

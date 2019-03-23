@@ -43,13 +43,12 @@ async function findMothers() {
 }
 async function findDrivers() {
   try {
-    const driv = await db("users").where({ user_type: "drivers" });
-    const drivers = driv.map(element => {
-      return findByUserType(element);
-    });
+    const drivers = await db("users")
+      .innerJoin("drivers", "drivers.google_id", "users.google_id")
+      .where({ user_type: "drivers" });
     return drivers;
   } catch (error) {
-    throw new Error("Could not find any mothers");
+    throw new Error("Could not find any drivers");
   }
 }
 async function findByUserType(user) {
