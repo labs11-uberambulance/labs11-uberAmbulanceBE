@@ -1,0 +1,35 @@
+git:
+  quiet: true
+# branches:
+#   only:
+#     - master
+language: node_js
+node_js:
+  - "10"
+dist: trusty
+services:
+  -postgresql
+cache:
+  directories:
+  - node_modules
+install:
+  - npm install
+before_script:
+  - psql -c 'create database "BR-test-db";' -U postgres
+env:
+  global:
+    - TESTPW='' DB_ENV=testing
+script:
+  - nohup &
+  - knex migrate:latest --env testing
+  - knex seed:run --env testing
+  - sleep 3
+  - npm run ci-test #when we add test uncomment
+notifications:
+  email:
+    on_failure: change
+  # slack: #If we want notifications on slack
+  #   rooms:
+  #     - <account>:<token>#labs11_uber-travis-builds
+  #   on_failure: change
+  #   on_pull_requests: false

@@ -7,7 +7,9 @@ module.exports = {
   findById,
   findByUserType,
   findMothers,
-  findDrivers
+  findDrivers,
+  remove,
+  register
 };
 function find() {
   return db("users").select("id", "name");
@@ -61,3 +63,19 @@ async function findById(id) {
   console.log(user);
   return user;
 }
+
+function remove(id){
+  return db('users').where({"id":id}).del()
+}
+
+
+// Registration and Login 
+
+
+async function register(user){
+  const [id] = await db("users").insert(user, "id");
+  const registered = await db("users").where({id})
+  return registered
+}
+
+
