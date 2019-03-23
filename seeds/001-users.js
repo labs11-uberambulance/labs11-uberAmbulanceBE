@@ -7,7 +7,7 @@ exports.seed = function(knex, Promise) {
       login: faker.internet.email(),
       google_id: faker.random.alphaNumeric(5),
       phone: faker.random.number(9),
-      user_type: "mothers"
+      user_type: i % 2 ? "mothers" : "drivers"
     };
   }
   const users = [];
