@@ -20,12 +20,14 @@ describe("Test Users Route", () => {
       expect(res.status).toEqual(200);
       expect(res.body.length).toBeGreaterThan(500);
     });
+
     it("should return 200 and array matching mothers param", async () => {
       const res = await request(server).get("/api/users/mothers");
       expect(res.body).toEqual(expect.any(Array));
       expect(res.status).toEqual(200);
       expect(res.body.length).toBeGreaterThan(250);
     });
+
     it("should return 200 and array matching drivers param", async () => {
       const res = await request(server).get("/api/users/drivers");
       expect(res.body).toEqual(expect.any(Array));
