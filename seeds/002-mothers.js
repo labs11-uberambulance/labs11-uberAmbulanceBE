@@ -12,7 +12,9 @@ exports.seed = async function(knex, Promise) {
           ? faker.address.streetAddress()
           : faker.lorem.sentences("4");
       const now = new Date(Date.now());
-      const later = new Date(new Date(Date.now()).setMonth(now.getMonth() + 9));
+      // doing the next part on 2 lines keeps faker happy
+      const later = new Date(Date.now());
+      later.setMonth(now.getMonth() + 9);
       return {
         google_id,
         address: address,
