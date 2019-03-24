@@ -28,7 +28,7 @@ async function protect(req, res, next) {
       });
   } else {
     res.status(401).json({
-      message: "Log in and provide firebase ID to view this content."
+      message: "Log in and provide token to view this content."
     });
   }
 }
