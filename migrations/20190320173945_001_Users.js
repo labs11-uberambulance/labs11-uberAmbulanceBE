@@ -8,7 +8,7 @@ exports.up = function(knex, Promise) {
       .string("google_id", 500)
       .notNullable()
       .unique();
-    tbl.integer("phone");
+    tbl.string("phone", 32);
     tbl.enum("user_type", ["mothers", "drivers"]);
   });
 };

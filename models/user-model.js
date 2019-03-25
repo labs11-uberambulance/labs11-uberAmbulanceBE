@@ -19,24 +19,36 @@ function findBy(filter) {
 }
 async function findMothers() {
   try {
-    const moms = await db("users").where({ user_type: "mothers" });
-    const mothers = moms.map(element => {
-      return findByUserType(element);
-    });
-    return mothers;
+    const moms = await db("users")
+      // .select(
+      //   "id",
+      //   "name",
+      //   "login",
+      //   "google_id",
+      //   "phone"
+      //   "mothers.address",
+      //   "mothers.village",
+      //   "mothers.caretaker_name",
+      //   "mothers.due_date",
+      //   "mothers.hospital",
+      //   "mothers.email"
+      // )
+      // .from("users")
+      .innerJoin("mothers", "mothers.google_id", "users.google_id")
+      .where({ user_type: "mothers" });
+    return moms;
   } catch (error) {
     throw new Error("Could not find any mothers");
   }
 }
 async function findDrivers() {
   try {
-    const driv = await db("users").where({ user_type: "drivers" });
-    const drivers = driv.map(element => {
-      return findByUserType(element);
-    });
+    const drivers = await db("users")
+      .innerJoin("drivers", "drivers.google_id", "users.google_id")
+      .where({ user_type: "drivers" });
     return drivers;
   } catch (error) {
-    throw new Error("Could not find any mothers");
+    throw new Error("Could not find any drivers");
   }
 }
 async function findByUserType(user) {
@@ -64,18 +76,16 @@ async function findById(id) {
   return user;
 }
 
-function remove(id){
-  return db('users').where({"id":id}).del()
+function remove(id) {
+  return db("users")
+    .where({ id: id })
+    .del();
 }
 
+// Registration and Login
 
-// Registration and Login 
-
-
-async function register(user){
+async function register(user) {
   const [id] = await db("users").insert(user, "id");
-  const registered = await db("users").where({id})
-  return registered
+  const registered = await db("users").where({ id });
+  return registered;
 }
-
-
