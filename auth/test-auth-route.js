@@ -2,7 +2,6 @@ const router = require("express").Router();
 
 // base url is /api/test-auth, set in server.js
 router.get("/", (req, res) => {
-  let msg = "";
   let uname = "";
   // check which provider was used to auth user:
   let provider = req.user.firebase.sign_in_provider;

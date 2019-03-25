@@ -18,11 +18,11 @@ server.use(express.json());
 
 // setup routes
 server.use("/api/users", userRoutes);
-server.use("/api/test-auth", protect, testAuthRoute);
 
-// Test route
+// Test routes
 server.get("/", async (req, res) => {
   res.status(200).json("Hey there BirthRide Dev!");
 });
+server.use("/api/test-auth", protect, testAuthRoute);
 
 module.exports = server;

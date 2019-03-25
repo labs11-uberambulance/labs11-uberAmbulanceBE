@@ -9,7 +9,6 @@
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "faker": "^4.1.0",
-    "firebase-admin": "^7.1.1",
     "helmet": "^3.16.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.16.3",
@@ -20,6 +19,7 @@
   },
   "devDependencies": {
     "cross-env": "^5.2.0",
+    "firebase-admin": "^7.1.1",
     "jest": "^24.5.0",
     "supertest": "^4.0.2"
   },
