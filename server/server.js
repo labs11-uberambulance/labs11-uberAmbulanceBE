@@ -9,6 +9,7 @@ const restrict = require("../auth/auth-mw").restrict; // requires firebase user 
 const userRoutes = require("../routes/users-routes.js");
 const userRoutesAdmin = require("../routes/users-routes-admin.js");
 const testAuthRoute = require("../auth/test-auth-route");
+const twilioRoutes = require("../routes/twilio");
 
 // configure middlewares
 server.use(helmet());
@@ -18,6 +19,7 @@ server.use(express.json());
 // Configure Routes
 server.use("/api/users/", protect, userRoutes);
 server.use("/api/admin/users/", protect, restrict, userRoutesAdmin);
+server.use("/api/twilio", twilioRoutes);
 
 // Test routes
 server.get("/", async (req, res) => {
