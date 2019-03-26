@@ -15,7 +15,7 @@ describe("Test Users Route", () => {
     // note: we are seeding >500 users, half "mothers", "half drivers". get response length check assumes seed file is set up this way.
     it("Should return 200 ok and array", async () => {
       const res = await request(server).get("/api/users");
-      console.log(res.body.length); //
+      console.log(res.status);
       expect(res.body).toEqual(expect.any(Array));
       expect(res.status).toEqual(200);
       expect(res.body.length).toBeGreaterThan(500);
