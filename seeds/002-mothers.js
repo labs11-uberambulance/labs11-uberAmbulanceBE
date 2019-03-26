@@ -19,8 +19,14 @@ exports.seed = async function(knex, Promise) {
         google_id,
         address: address,
         village: faker.address.city(),
-        latitude: faker.latitude(),
-        longitude: faker.longitude(),
+        // Uganda between -1.4, 4.2, faker doesn't play nice with neg nums
+        latitude: faker.random.number({ max: 5.6, precision: 0.000001 }) - 1.4,
+        // Uganda between 29.5, 35.5
+        longitude: faker.random.number({
+          min: 29.5,
+          max: 35.3,
+          precision: 0.000001
+        }),
         caretaker_name: Math.random() > 0.7 ? faker.name.findName() : "",
         due_date: faker.date.between(now, later),
         hospital: hospitals[Math.floor(Math.random() * hospitals.length)],
