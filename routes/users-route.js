@@ -4,9 +4,25 @@ const protect = require("../auth/auth-mw").protect; // requires valid firebase t
 const restrict = require("../auth/auth-mw").restrict; // requires firebase user to match ADMIN_FIREBASE in .env
 
 // base url is /api/users, set in server.js
-
-// ADMIN ONLY route filter parameter is optional, will select users by user_type
-router.get("/:user_type?", protect, restrict, (req, res) => {
+router.get("/", protect, async (req, res) => {
+  const { user_id } = req.user;
+  const [user] = await Users.findBy({ firebase_id: user_id });
+  try {
+    if (user.length) {
+      // user found, return it
+      console.log("user found, ", user);
+      res.status(200).json({ user });
+    } else {
+      // no user found, create it
+      console.log("no user, creating");
+      res.end();
+    }
+  } catch (error) {
+    console.error("error finding by firebase_id: ", error);
+  }
+});
+// ADMIN ONLY routes filter parameter is optional, will select users by user_type and return all
+router.get("/admin/:user_type?", protect, restrict, (req, res) => {
   const user_type = req.params.user_type;
   if (!user_type) {
     Users.find()
