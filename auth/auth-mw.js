@@ -1,10 +1,12 @@
 const admin = require("firebase-admin");
+require("dotenv").config();
 
 module.exports = {
-  protect
+  protect,
+  restrict
 };
 
-// // setup firebase-admin:
+// setup firebase-admin:
 admin.initializeApp(); // remember to set GOOGLE_CLOUD_PROJECT in .env
 
 // mw to protect a route, check that user is auth'd using firebase
@@ -30,5 +32,16 @@ async function protect(req, res, next) {
     res.status(401).json({
       message: "Log in and provide token to view this content."
     });
+  }
+}
+
+// mw to restrict access to a route, checks that user's firebase id matches ADMIN_FIREBASE.
+// Note: must call after protect to give access to decoded token
+function restrict(req, res, next) {
+  const { firebaseId } = req.user;
+  if (firebaseId === process.env.ADMIN_FIREBASE) {
+    return next();
+  } else {
+    res.status(401).json({ message: "Must be admin to access this route. " });
   }
 }
