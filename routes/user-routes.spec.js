@@ -10,14 +10,23 @@ beforeAll(async done => {
   return done();
 });
 
+const testRoute = "/api/users";
 const adminTestRoute = "/api/admin/users";
 
-describe("Test Users Route", () => {
+describe("Test Users Routes (non-admin)", () => {
+  describe(`GET ${testRoute}`, () => {
+    it("Should return 201 ok and json", async () => {
+      const res = await request(server).get(`${testRoute}`);
+      expect(res.status).toEqual(201);
+    });
+  });
+});
+
+describe("Test Users Routes for Admin", () => {
   describe(`GET ${adminTestRoute}`, () => {
     // note: we are seeding >500 users, half "mothers", "half drivers". get response length check assumes seed file is set up this way.
     it("Should return 200 ok and array", async () => {
       const res = await request(server).get(`${adminTestRoute}`);
-      console.log(res.status);
       expect(res.body).toEqual(expect.any(Array));
       expect(res.status).toEqual(200);
       expect(res.body.length).toBeGreaterThan(500);
