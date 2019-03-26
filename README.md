@@ -130,6 +130,8 @@ ride = {
   // int, foreign key references mothers table
   wait_min: 3,
   // int, defaults to 20, number of minutes to wait for confirmation/rejection of ride request
+  request_time: "time_of_request_to_driver",
+  // string, time data accurate to minutes, gets set when a ride request is made to a driver, used with "wait_min" to determine when next driver should be requested
   start_village: "village_name",
   // string, 500 char limit, must be findable by google maps API
   start_address: "address_here",
@@ -155,6 +157,8 @@ newRide = {
   // int, required, id of mother requesting the ride
   wait_min: 3,
   // int, defaults to 20, number of minutes to wait for confirmation/rejection of ride request
+  request_time: "time_of_request_to_driver",
+  // string, time data accurate to minutes, gets set when a ride request is made to a driver, used with "wait_min" to determine when next driver should be requested
   start_village: "village_name",
   // string, required, 500 char limit, must be findable by google maps API
   start_address: "address_here",

@@ -15,11 +15,14 @@ exports.up = function(knex, Promise) {
       .references("id")
       .inTable("mothers")
       .onUpdate("CASCADE");
+    tbl.integer("wait_min").unsigned();
+    tbl.datetime("request_time");
     tbl.string("start_village", 500);
     tbl.json("start_address");
     tbl.string("destination", 500);
     tbl.json("destination_address");
     tbl.string("ride_status");
+    tbl.timestamps();
   });
 };
 
