@@ -1,15 +1,18 @@
-
 exports.up = function(knex, Promise) {
-    return knex.schema.createTable('users', function(tbl){
-        tbl.increments('id').primary();
-        tbl.string("name", 255).notNullable();
-        tbl.string("login", 255);
-        tbl.string("google_id", 500).notNullable().unique();
-        tbl.integer("phone").notNullable()
-        tbl.enum('user_type', ['mothers', 'drivers']).notNullable()
-    })
+  return knex.schema.createTable("users", function(tbl) {
+    tbl.increments("id").primary();
+    tbl.string("name", 255);
+    tbl.string("login", 255);
+    tbl
+      .string("firebase_id", 500)
+      .notNullable()
+      .unique();
+    tbl.string("phone", 32);
+    tbl.enum("user_type", ["mothers", "drivers"]);
+    tbl.timestamps();
+  });
 };
 
 exports.down = function(knex, Promise) {
-    return knex.schema.dropTableIfExists('users');
+  return knex.schema.dropTableIfExists("users");
 };

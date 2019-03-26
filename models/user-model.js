@@ -7,7 +7,9 @@ module.exports = {
   findById,
   findByUserType,
   findMothers,
-  findDrivers
+  findDrivers,
+  remove,
+  register
 };
 function find() {
   return db("users").select("id", "name");
@@ -17,32 +19,44 @@ function findBy(filter) {
 }
 async function findMothers() {
   try {
-    const moms = await db("users").where({ user_type: "mothers" });
-    const mothers = moms.map(element => {
-      return findByUserType(element);
-    });
-    return mothers;
+    const moms = await db("users")
+      // .select(
+      //   "id",
+      //   "name",
+      //   "login",
+      //   "firebase_id",
+      //   "phone"
+      //   "mothers.address",
+      //   "mothers.village",
+      //   "mothers.caretaker_name",
+      //   "mothers.due_date",
+      //   "mothers.hospital",
+      //   "mothers.email"
+      // )
+      // .from("users")
+      .innerJoin("mothers", "mothers.firebase_id", "users.firebase_id")
+      .where({ user_type: "mothers" });
+    return moms;
   } catch (error) {
     throw new Error("Could not find any mothers");
   }
 }
 async function findDrivers() {
   try {
-    const driv = await db("users").where({ user_type: "drivers" });
-    const drivers = driv.map(element => {
-      return findByUserType(element);
-    });
+    const drivers = await db("users")
+      .innerJoin("drivers", "drivers.firebase_id", "users.firebase_id")
+      .where({ user_type: "drivers" });
     return drivers;
   } catch (error) {
-    throw new Error("Could not find any mothers");
+    throw new Error("Could not find any drivers");
   }
 }
 async function findByUserType(user) {
   try {
-    const google_id = user.google_id;
+    const firebase_id = user.firebase_id;
     const type = user.user_type;
     const userTypeData = await db(`${type}`)
-      .where({ google_id })
+      .where({ firebase_id })
       .first();
     return { user, userTypeData };
   } catch (error) {
@@ -60,4 +74,18 @@ async function findById(id) {
     .first();
   console.log(user);
   return user;
+}
+
+function remove(id) {
+  return db("users")
+    .where({ id: id })
+    .del();
+}
+
+// Registration and Login
+
+async function register(user) {
+  const [id] = await db("users").insert(user, "id");
+  const registered = await db("users").where({ id });
+  return registered;
 }
