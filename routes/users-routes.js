@@ -5,6 +5,7 @@ const Users = require("../models/user-model.js");
 router.get("/", async (req, res) => {
   const { user_id } = req.user;
   const [user] = await Users.findBy({ firebase_id: user_id });
+  console.log(user);
   try {
     if (user) {
       // user found, return it
@@ -13,7 +14,11 @@ router.get("/", async (req, res) => {
     } else {
       // no user found, create it
       console.log("no user, creating");
-      res.status(201).json({ user: "created" });
+      const newUser = {
+        firebase_id: user_id
+      };
+      userId = await Users.add(newUser);
+      res.status(201).json({ user: newUser });
     }
   } catch (error) {
     console.error("error finding by firebase_id: ", error);
