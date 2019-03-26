@@ -15,7 +15,7 @@ const adminTestRoute = "/api/admin/users";
 
 describe("Test Users Routes (non-admin)", () => {
   describe(`GET ${testRoute}`, () => {
-    it("Should return 201 ok and json", async () => {
+    it("Should return 201", async () => {
       const res = await request(server).get(`${testRoute}`);
       expect(res.status).toEqual(201);
     });
