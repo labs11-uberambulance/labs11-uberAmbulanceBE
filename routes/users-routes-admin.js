@@ -1,10 +1,9 @@
 const router = require("express").Router();
 const Users = require("../models/user-model.js");
-// base url is /api/users, set in server.js
-const jwt = require("jsonwebtoken");
-const secret = process.env.JWT_SECRET;
 
-// filter parameter is optional, will select users by user_type
+// base url is /api/admin/users/, set in server.js
+
+// ADMIN ONLY route filter parameter is optional, will select users by user_type
 router.get("/:user_type?", (req, res) => {
   const user_type = req.params.user_type;
   if (!user_type) {
@@ -50,6 +49,7 @@ router.post("/", (req, res) => {
       res.status(500).json({ message: ` Failed to add user`, error: err });
     });
 });
+
 router.delete("/:id", (req, res) => {
   Users.remove(req.params.id)
     .then(deleted => {
@@ -59,15 +59,6 @@ router.delete("/:id", (req, res) => {
       res.status(500).json({ message: "failed to delete user", error: err });
     });
 });
-function generateToken(user) {
-  const payload = {
-    id: user.id
-  };
-  const options = {
-    expiresIn: "24h"
-  };
-  return jwt.sign(payload, options);
-}
 
 router.post("/register", (req, res) => {
   Users.register(req.body)
@@ -85,16 +76,5 @@ router.post("/register", (req, res) => {
       });
     });
 });
-
-// response = {
-//     user: {
-//       id: firebaseId,
-//       photoURL: photoURL,
-//       email: email,
-//       phoneNumber: phoneNumber
-//     },
-//     token: '',
-//     tokenExpiration: 60
-//   }
 
 module.exports = router;

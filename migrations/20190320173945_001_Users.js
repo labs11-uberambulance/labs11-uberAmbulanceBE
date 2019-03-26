@@ -8,7 +8,7 @@ exports.up = function(knex, Promise) {
       .notNullable()
       .unique();
     tbl.string("phone", 32);
-    tbl.enum("user_type", ["mothers", "drivers"]);
+    tbl.enum("user_type", ["mothers", "drivers", ""]);
     tbl.timestamps();
   });
 };
