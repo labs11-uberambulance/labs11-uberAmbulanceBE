@@ -10,11 +10,13 @@ beforeAll(async done => {
   return done();
 });
 
+const adminTestRoute = "/api/admin/users";
+
 describe("Test Users Route", () => {
-  describe("GET /api/users", () => {
+  describe(`GET ${adminTestRoute}`, () => {
     // note: we are seeding >500 users, half "mothers", "half drivers". get response length check assumes seed file is set up this way.
     it("Should return 200 ok and array", async () => {
-      const res = await request(server).get("/api/users");
+      const res = await request(server).get(`${adminTestRoute}`);
       console.log(res.status);
       expect(res.body).toEqual(expect.any(Array));
       expect(res.status).toEqual(200);
@@ -22,22 +24,22 @@ describe("Test Users Route", () => {
     });
 
     it("should return 404 if user type is not valid", async () => {
-      const res = await request(server).get("/api/users/wrong_type");
+      const res = await request(server).get(`${adminTestRoute}/wrong_type`);
       expect(res.status).toEqual(404);
     });
 
-    describe("GET /api/users/mothers", () => {
+    describe(`GET ${adminTestRoute}`, () => {
       it("should return 200 and array matching mothers param", async () => {
-        const res = await request(server).get("/api/users/mothers");
+        const res = await request(server).get(`${adminTestRoute}/mothers`);
         expect(res.body).toEqual(expect.any(Array));
         expect(res.status).toEqual(200);
         expect(res.body.length).toBeGreaterThan(250);
       });
     });
 
-    describe("GET /api/users/drivers", () => {
+    describe(`GET ${adminTestRoute}`, () => {
       it("should return 200 and array matching drivers param", async () => {
-        const res = await request(server).get("/api/users/drivers");
+        const res = await request(server).get(`${adminTestRoute}/drivers`);
         expect(res.body).toEqual(expect.any(Array));
         expect(res.status).toEqual(200);
         expect(res.body.length).toBeGreaterThan(250);
