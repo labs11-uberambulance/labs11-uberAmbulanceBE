@@ -38,8 +38,9 @@ async function protect(req, res, next) {
 // mw to restrict access to a route, checks that user's firebase id matches ADMIN_FIREBASE.
 // Note: must call after protect to give access to decoded token
 function restrict(req, res, next) {
-  const { firebaseId } = req.user;
-  if (firebaseId === process.env.ADMIN_FIREBASE) {
+  const { user_id } = req.user;
+  console.log("firebaseId", req.user);
+  if (user_id === process.env.ADMIN_FIREBASE) {
     return next();
   } else {
     res.status(401).json({ message: "Must be admin to access this route. " });
