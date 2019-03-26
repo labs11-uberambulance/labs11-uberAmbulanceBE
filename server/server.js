@@ -7,6 +7,7 @@ const protect = require("../auth/auth-mw").protect;
 // routes imports
 const userRoutes = require("../routes/users-route.js");
 const testAuthRoute = require("../auth/test-auth-route");
+const twilioRoutes = require('../routes/twilio');
 
 // configure middlewares
 server.use(helmet());
@@ -15,6 +16,7 @@ server.use(express.json());
 
 // Configure Routes
 server.use("/api/users", userRoutes);
+server.use("/api/twilio", twilioRoutes);
 
 // Test routes
 server.get("/", async (req, res) => {
