@@ -11,6 +11,8 @@ exports.seed = async function(knex, Promise) {
         google_id,
         address: address,
         village: faker.address.city(),
+        latitude: faker.latitude(),
+        longitude: faker.longitude(),
         // assume drivers have email even if login is with phone
         email: login.includes("@") ? login : faker.internet.email(),
         price: faker.random.number({ min: 200, max: 500 }),

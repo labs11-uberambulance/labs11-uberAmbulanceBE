@@ -19,6 +19,8 @@ exports.seed = async function(knex, Promise) {
         google_id,
         address: address,
         village: faker.address.city(),
+        latitude: faker.latitude(),
+        longitude: faker.longitude(),
         caretaker_name: Math.random() > 0.7 ? faker.name.findName() : "",
         due_date: faker.date.between(now, later),
         hospital: hospitals[Math.floor(Math.random() * hospitals.length)],
