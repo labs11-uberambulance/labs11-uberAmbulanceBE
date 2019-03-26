@@ -128,6 +128,8 @@ ride = {
   // int, foreign key references drivers table
   mother_id: 3,
   // int, foreign key references mothers table
+  wait_min: 3,
+  // int, defaults to 20, number of minutes to wait for confirmation/rejection of ride request
   start_village: "village_name",
   // string, 500 char limit, must be findable by google maps API
   start_address: "address_here",
@@ -147,9 +149,9 @@ submit this data to create a new ride
 
 ```js
 newRide = {
-  driver: id,
+  driver_id: id,
   // int, required, id of driver to request ride from
-  mother: id,
+  mother_id: id,
   // int, required, id of mother requesting the ride
   wait_min: 3,
   // int, defaults to 20, number of minutes to wait for confirmation/rejection of ride request
