@@ -2,10 +2,10 @@ exports.up = function(knex, Promise) {
   return knex.schema.createTable("mothers", function(tbl) {
     tbl.increments("id").primary();
     tbl
-      .string("google_id")
+      .string("firebase_id")
       .unsigned()
       .notNullable()
-      .references("google_id")
+      .references("firebase_id")
       .inTable("users")
       .onUpdate("CASCADE");
     tbl.string("address", 500);

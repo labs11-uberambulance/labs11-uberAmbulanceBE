@@ -6,7 +6,7 @@ exports.seed = async function(knex, Promise) {
   // get "mothers users"
   const mothersUsers = await Users.findBy({ user_type: "mothers" }).map(
     user => {
-      const { login, google_id } = user;
+      const { login, firebase_id } = user;
       const address =
         Math.random() > 0.2
           ? faker.address.streetAddress()
@@ -16,7 +16,7 @@ exports.seed = async function(knex, Promise) {
       const later = new Date(Date.now());
       later.setMonth(now.getMonth() + 9);
       return {
-        google_id,
+        firebase_id,
         address: address,
         village: faker.address.city(),
         // Uganda between -1.4, 4.2, faker doesn't play nice with neg nums

@@ -5,10 +5,10 @@ exports.seed = async function(knex, Promise) {
   // get "drivers users"
   const driversUsers = await Users.findBy({ user_type: "drivers" }).map(
     user => {
-      const { login, google_id } = user;
+      const { login, firebase_id } = user;
       const address = faker.address.streetAddress();
       return {
-        google_id,
+        firebase_id,
         address: address,
         village: faker.address.city(),
         // Uganda between -1.4, 4.2, faker doesn't play nice with neg nums
