@@ -24,7 +24,7 @@ async function findMothers() {
       //   "id",
       //   "name",
       //   "login",
-      //   "google_id",
+      //   "firebase_id",
       //   "phone"
       //   "mothers.address",
       //   "mothers.village",
@@ -34,7 +34,7 @@ async function findMothers() {
       //   "mothers.email"
       // )
       // .from("users")
-      .innerJoin("mothers", "mothers.google_id", "users.google_id")
+      .innerJoin("mothers", "mothers.firebase_id", "users.firebase_id")
       .where({ user_type: "mothers" });
     return moms;
   } catch (error) {
@@ -44,7 +44,7 @@ async function findMothers() {
 async function findDrivers() {
   try {
     const drivers = await db("users")
-      .innerJoin("drivers", "drivers.google_id", "users.google_id")
+      .innerJoin("drivers", "drivers.firebase_id", "users.firebase_id")
       .where({ user_type: "drivers" });
     return drivers;
   } catch (error) {
@@ -53,10 +53,10 @@ async function findDrivers() {
 }
 async function findByUserType(user) {
   try {
-    const google_id = user.google_id;
+    const firebase_id = user.firebase_id;
     const type = user.user_type;
     const userTypeData = await db(`${type}`)
-      .where({ google_id })
+      .where({ firebase_id })
       .first();
     return { user, userTypeData };
   } catch (error) {

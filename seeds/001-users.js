@@ -9,7 +9,7 @@ exports.seed = function(knex, Promise) {
     return {
       name: faker.name.findName(),
       login: loginType === "email" ? faker.internet.email() : phone,
-      google_id: faker.random.alphaNumeric(8),
+      firebase_id: faker.random.alphaNumeric(8),
       phone,
       user_type: i % 2 ? "mothers" : "drivers"
     };
