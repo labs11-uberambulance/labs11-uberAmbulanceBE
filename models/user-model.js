@@ -2,6 +2,8 @@ const db = require("../data/dbConfig.js");
 
 module.exports = {
   add,
+  // addMother,
+  // addDriver,
   find,
   findBy,
   findById,
@@ -72,6 +74,14 @@ async function add(user) {
   const [id] = await db("users").insert(user, "id");
   return findById(id);
 }
+// async function addMother(mother) {
+//   const [id] = await db("mothers").insert(mother, "id");
+//   return findByMothersBy({id});
+// }
+// async function addDriver(driver) {
+//   const [id] = await db("drivers").insert(driver, "id");
+//   return findDriversBy({id});
+// }
 async function findById(id) {
   const user = await db("users")
     .where({ id })

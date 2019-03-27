@@ -31,6 +31,20 @@ describe("Test Users Routes (non-admin)", () => {
       expect(res.body.motherData).toEqual(expect.any(Array));
     });
   });
+  describe(`POST ${testRoute}/onboard/:id`, () => {
+    it("should return 200 when updating a mother", async () => {
+      const res = await request(server)
+        .post(`${testRoute}/onboard/1`)
+        .send({ user_type: "mothers" });
+      expect(res.status).toEqual(200);
+    });
+    it("should return 200 when updating a driver", async () => {
+      const res = await request(server)
+        .post(`${testRoute}/onboard/11`)
+        .send({ user_type: "drivers" });
+      expect(res.status).toEqual(200);
+    });
+  });
 });
 
 describe("Test Users Routes for Admin", () => {
