@@ -11,39 +11,31 @@ const Rides = require("../models/rides-model.js");
 router.post('/drivers', (req, res) => {
     const lat = req.body.lat;
     const long = req.body.long;
-    const location = req.body.village;
-    if(lat===null || long===null){
-        Rides.findDrivers(location)
-        .then(
-            data => {res.status(201).json(data);}
+    Rides.findDrivers(lat, long)
+        .then( data => 
+          {res.status(201).json(data);}
         )
-        .catch( err =>{
+        .catch(err =>{
+            console.log(err)
             res.status(500).json({ message: `Failed to Coordinate Ride`, error: err })
         })
-    } else{
-        Rides.findDrivers(lat, long)
-        .then(
-            data => {res.status(201).json(data);}
-        )
-        .catch( err =>{
-            res.status(500).json({ message: `Failed to Coordinate Ride`, error: err })
-        })
-    }
 });
 
 
 router.post('/new-ride', (req, res) => {
-    
+//    const driver = req.body.driver_id;
+//    const destination = req.body.destination 
 });
 
+// Get ride by ride.id
+router.get('/', (req, res) => {
+    const ride_id = req.body.ride_id
+});
+// get a user's ride
 router.get('/', (req, res) => {
     
 });
-
-router.get('/', (req, res) => {
-    
-});
-
+//Update Ride
 router.put('/', (req, res) => {
     
 });
