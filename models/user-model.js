@@ -2,8 +2,8 @@ const db = require("../data/dbConfig.js");
 
 module.exports = {
   add,
-  // addMother,
-  // addDriver,
+  addMother,
+  addDriver,
   find,
   findBy,
   findById,
@@ -13,8 +13,22 @@ module.exports = {
   findDrivers,
   findDriversBy,
   remove,
-  register
+  register,
+  updateUser
 };
+async function add(user) {
+  const [id] = await db("users").insert(user, "id");
+  return findById(id);
+}
+async function addMother(mother) {
+  const [id] = await db("mothers").insert(mother, "id");
+  console.log("addMother:  ", id);
+  return findMothersBy({ id });
+}
+async function addDriver(driver) {
+  const [id] = await db("drivers").insert(driver, "id");
+  return findDriversBy({ id });
+}
 function find() {
   return db("users").select("id", "name");
 }
@@ -70,18 +84,6 @@ async function findByUserType(user) {
     throw new Error("Could not retrieve usertype information");
   }
 }
-async function add(user) {
-  const [id] = await db("users").insert(user, "id");
-  return findById(id);
-}
-// async function addMother(mother) {
-//   const [id] = await db("mothers").insert(mother, "id");
-//   return findByMothersBy({id});
-// }
-// async function addDriver(driver) {
-//   const [id] = await db("drivers").insert(driver, "id");
-//   return findDriversBy({id});
-// }
 async function findById(id) {
   const user = await db("users")
     .where({ id })
@@ -102,4 +104,11 @@ async function register(user) {
   const [id] = await db("users").insert(user, "id");
   const registered = await db("users").where({ id });
   return registered;
+}
+
+async function updateUser(filter, userData) {
+  const updatedId = await db("users")
+    .where(filter)
+    .update(userData, ["id"]);
+  return [updatedId];
 }

@@ -34,18 +34,26 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/onboard/:id", async (req, res) => {
-  // id passed as parameter is user id, this is used to determine mother/driver without depending on mother/driver data to be complete.
-  const userId = req.params.id;
-  const userData = await Users.findById(userId);
+  // user id passed as parameter, this is used to determine mother/driver without depending on mother/driver data to be complete.
+  const id = req.params.id;
+  const userData = await Users.findById(id);
+  const firebase_id = userData.firebase_id;
   let updated;
   try {
-    if (userData.user_type === "mothers") {
-      console.log("mother", userData);
-      // updated = await Users.update("mothers").
-      res.status(200).json({ mother: "updated" });
-    } else if (userData.user_type === "drivers") {
-      console.log("driver", userData);
+    if (req.body.user_type === "mother") {
+      const motherData = { ...req.body.motherData, firebase_id };
+      // first update user record
+      await Users.updateUser({ id }, { user_type: "mothers" });
+      // second create mother record
+      updated = await Users.addMother(motherData);
+      res.status(200).json({ mother: updated });
+    } else if (req.body.user_type === "driver") {
+      // console.log("driver", userData);
       res.status(200).json({ driver: "updated" });
+    } else {
+      res
+        .status(400)
+        .json({ message: "must set 'user_type' 'mothers' or 'drivers'." });
     }
   } catch (error) {
     console.error("error with POST to /onboard: ", error);

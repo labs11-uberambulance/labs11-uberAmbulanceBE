@@ -32,16 +32,19 @@ describe("Test Users Routes (non-admin)", () => {
     });
   });
   describe(`POST ${testRoute}/onboard/:id`, () => {
-    it("should return 200 when updating a mother", async () => {
+    it("should return 200 when onboarding a mother", async () => {
       const res = await request(server)
-        .post(`${testRoute}/onboard/1`)
-        .send({ user_type: "mothers" });
+        .post(`${testRoute}/onboard/501`)
+        .send({
+          user_type: "mother",
+          motherData: { due_date: "2019-07-07" }
+        });
       expect(res.status).toEqual(200);
     });
-    it("should return 200 when updating a driver", async () => {
+    it("should return 200 when onboarding a driver", async () => {
       const res = await request(server)
-        .post(`${testRoute}/onboard/11`)
-        .send({ user_type: "drivers" });
+        .post(`${testRoute}/onboard/502`)
+        .send({ user_type: "driver" });
       expect(res.status).toEqual(200);
     });
   });
@@ -66,7 +69,7 @@ describe("Test Users Routes for Admin", () => {
         const res = await request(server).get(`${adminTestRoute}/mothers`);
         expect(res.body).toEqual(expect.any(Array));
         expect(res.status).toEqual(200);
-        expect(res.body.length).toBeGreaterThan(249);
+        expect(res.body.length).toBeGreaterThan(240);
       });
     });
 
@@ -75,7 +78,7 @@ describe("Test Users Routes for Admin", () => {
         const res = await request(server).get(`${adminTestRoute}/drivers`);
         expect(res.body).toEqual(expect.any(Array));
         expect(res.status).toEqual(200);
-        expect(res.body.length).toBeGreaterThan(249);
+        expect(res.body.length).toBeGreaterThan(240);
       });
     });
   });

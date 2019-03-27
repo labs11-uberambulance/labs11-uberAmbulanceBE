@@ -60,7 +60,7 @@ exports.seed = function(knex, Promise) {
       user_type: "drivers"
     };
   }
-  // edit accounts 21 & 22 to have real firebase_ids
+  // edit accounts 21, 22, 23 to have real firebase_ids
   users[20] = {
     ...users[20],
     name: "birthride-test-mother",
@@ -79,6 +79,16 @@ exports.seed = function(knex, Promise) {
     firebase_id: "eBmX5Et0P4TAGHUfPPyUcnsAS963", // belongs to ph: 11958306948
     user_type: ""
   };
+  // edit 501 & 502 to be users who have not onboarded
+  users[500] = {
+    ...users[500],
+    user_type: ""
+  };
+  users[501] = {
+    ...users[501],
+    user_type: ""
+  };
+
   return (
     knex("users")
       // Delete existing entries handled in 000-cleaner.js
