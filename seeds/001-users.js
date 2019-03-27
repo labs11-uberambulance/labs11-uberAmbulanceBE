@@ -31,6 +31,25 @@ exports.seed = function(knex, Promise) {
       user_type: "drivers"
     };
   }
+  // edit accounts 21 & 22 to have real firebase_ids
+  users[20] = {
+    ...users[20],
+    name: "birthride-test-mother",
+    firebase_id: "vlW3V1awpQgeaaI22SicEthTxGv1", // belongs to ph: 1111111111
+    user_type: "mothers"
+  };
+  users[21] = {
+    ...users[21],
+    name: "birthride-test-driver",
+    firebase_id: "IoOWnaVWc4YY50hTmFpQZZSiDz73", // belongs to ph: 1222222222
+    user_type: "drivers"
+  };
+  users[22] = {
+    ...users[22],
+    name: "birthride-test-user",
+    firebase_id: "eBmX5Et0P4TAGHUfPPyUcnsAS963", // belongs to ph: 11958306948
+    user_type: ""
+  };
   return (
     knex("users")
       // Delete existing entries handled in 000-cleaner.js
