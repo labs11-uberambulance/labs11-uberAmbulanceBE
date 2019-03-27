@@ -25,8 +25,8 @@ router.get("/", async (req, res) => {
       const newUser = {
         firebase_id: user_id
       };
-      userId = await Users.add(newUser);
-      res.status(201).json({ user: newUser });
+      userAdded = await Users.add(newUser);
+      res.status(201).json({ user: userAdded });
     }
   } catch (error) {
     console.error("error finding by firebase_id: ", error);
