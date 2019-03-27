@@ -26,6 +26,8 @@ user = {
   // string, 500 char limit, street address or description
   village: "village name",
   // string, must match location findable by google maps API
+  email: "email@b.c",
+  // string, if provided
   latitude: 1.234567,
   // decimal, GPS latitude coord
   longitude: 1.234567
@@ -47,10 +49,8 @@ mother = {
   // string, if provided by completing "Caretaker" onboarding
   due_date: "date string",
   // string, format: YYYY-MM-DD
-  hospital: "hospital name",
+  hospital: "hospital name"
   // string, must match location findable by google maps API
-  email: "email@b.c"
-  // string, if provided
 };
 ```
 
@@ -66,8 +66,6 @@ driver = {
   // int, unique, set internally
   firebase_id: "firebase_id_here",
   // string, required, foreign key references users table
-  email: "email@b.c",
-  // string, if provided
   price: 345,
   // int, maximum price for ride
   active: false,

@@ -10,6 +10,7 @@ exports.up = function(knex, Promise) {
     tbl.enum("user_type", ["mothers", "drivers", ""]);
     tbl.string("address", 500);
     tbl.string("village", 500);
+    tbl.string("email");
     tbl.decimal("latitude", 9, 6);
     tbl.decimal("longitude", 9, 6);
     tbl.timestamps(true, true);

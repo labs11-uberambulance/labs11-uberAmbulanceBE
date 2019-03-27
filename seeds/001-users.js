@@ -8,14 +8,16 @@ exports.seed = function(knex, Promise) {
       Math.random() > 0.2
         ? faker.address.streetAddress()
         : faker.lorem.sentences("4");
-
+    const user_type = i % 2 ? "mothers" : "drivers";
     return {
       name: faker.name.findName(),
       firebase_id: faker.random.alphaNumeric(8),
       phone,
-      user_type: i % 2 ? "mothers" : "drivers",
+      user_type,
       address,
       village: towns[Math.floor(Math.random() * towns.length)],
+      // assume drivers have email even if login is with phone
+      email: user_type === "drivers" ? faker.internet.email() : null,
       // Uganda between -1.4, 4.2, faker doesn't play nice with neg nums
       // latitude: faker.random.number({ max: 5.6, precision: 0.000001 }) - 1.4,
       // INSTEAD using boundaries: 0.3, 1.1 (safemothers service area)
