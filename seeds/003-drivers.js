@@ -23,7 +23,8 @@ exports.seed = async function(knex, Promise) {
         email: faker.internet.email(),
         price: faker.random.number({ min: 200, max: 500 }),
         active: Math.random() > 0.5 ? true : false,
-        bio: faker.lorem.sentences("4")
+        bio: faker.lorem.sentences("4"),
+        photo_url: faker.image.people()
       };
     }
   );
