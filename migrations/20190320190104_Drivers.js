@@ -11,7 +11,7 @@ exports.up = function(knex, Promise) {
     tbl.integer("price");
     tbl.boolean("active");
     tbl.string("bio", 500);
-    tbl.string("photo_url");
+    tbl.string("photo_url", 500);
     tbl.timestamps(true, true);
   });
 };

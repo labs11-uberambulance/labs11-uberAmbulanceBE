@@ -4,6 +4,8 @@
 
 # Data Schemas
 
+Note: unless noted, string types are 255 char limit.
+
 ## User data
 
 Every user who completes OAuth process should have User data, FE (Web, AND, IOS) is responsible for making the appropriate request to the API upon successful completion of OAuth flow.
@@ -14,8 +16,6 @@ user = {
   // int, unique, set internally
   name: "name_here",
   // string
-  login: "email/phone_here",
-  // string depending on login type
   firebase_id: "firebase_id_here",
   // string required
   phone: "phone_number",
@@ -70,7 +70,9 @@ driver = {
   // int, maximum price for ride
   active: false,
   // bool, driver status (accepting rides?)
-  bio: "bio here"
+  bio: "bio here",
+  // string, 500 char limit
+  photo_url: "http://pic.driver.com"
   // string, 500 char limit
 };
 ```
