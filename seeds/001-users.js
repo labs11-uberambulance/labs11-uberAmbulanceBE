@@ -2,13 +2,10 @@ const faker = require("faker");
 
 exports.seed = function(knex, Promise) {
   function createFakeUser(i) {
-    const rand = Math.random();
-    const loginType = rand > 0.8 ? "email" : "phone";
     const phone = faker.phone.phoneNumber();
 
     return {
       name: faker.name.findName(),
-      login: loginType === "email" ? faker.internet.email() : phone,
       firebase_id: faker.random.alphaNumeric(8),
       phone,
       user_type: i % 2 ? "mothers" : "drivers"
