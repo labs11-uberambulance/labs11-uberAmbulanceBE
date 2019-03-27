@@ -37,6 +37,10 @@ router.post("/onboard/:id", async (req, res) => {
   // user id passed as parameter, this is used to determine mother/driver without depending on mother/driver data to be complete.
   const id = req.params.id;
   const userData = await Users.findById(id);
+  if (userData.user_type) {
+    res.status(400).json({ message: "This user has already been onboarded." });
+    return;
+  }
   const firebase_id = userData.firebase_id;
   let updated;
   try {
@@ -48,8 +52,12 @@ router.post("/onboard/:id", async (req, res) => {
       updated = await Users.addMother(motherData);
       res.status(200).json({ mother: updated });
     } else if (req.body.user_type === "driver") {
-      // console.log("driver", userData);
-      res.status(200).json({ driver: "updated" });
+      const driverData = { ...req.body.driverData, firebase_id };
+      // first update user record
+      await Users.updateUser({ id }, { user_type: "drivers" });
+      // second create driver record
+      updated = await Users.addDriver(driverData);
+      res.status(200).json({ driver: updated });
     } else {
       res
         .status(400)

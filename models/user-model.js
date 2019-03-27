@@ -22,7 +22,6 @@ async function add(user) {
 }
 async function addMother(mother) {
   const [id] = await db("mothers").insert(mother, "id");
-  console.log("addMother:  ", id);
   return findMothersBy({ id });
 }
 async function addDriver(driver) {

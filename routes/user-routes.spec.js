@@ -44,8 +44,14 @@ describe("Test Users Routes (non-admin)", () => {
     it("should return 200 when onboarding a driver", async () => {
       const res = await request(server)
         .post(`${testRoute}/onboard/502`)
-        .send({ user_type: "driver" });
+        .send({ user_type: "driver", driverData: { price: 777 } });
       expect(res.status).toEqual(200);
+    });
+    it("should return 400 if user_type already set.", async () => {
+      const res = await request(server)
+        .post(`${testRoute}/onboard/1`)
+        .send({ user_type: "driver" });
+      expect(res.status).toEqual(400);
     });
   });
 });
