@@ -8,10 +8,9 @@ module.exports = {
 // Uganda between 29.5, 35.5
 async function findDrivers(lat, long){
     // const Uganda = //GOOGLE API {lat: -1.4, 4.2} {long: 29.5, 35.5}
-    const activeDrivers = await db('drivers').where({"active": true})
+    const activeDrivers = await db('drivers').where({"active": true}).select("latitude", "longitude")
     return activeDrivers
-    // Send ActiveDrivers to Google to see where they are located
-
+    // Send ActiveDrivers Lat and Long to Google to see where they are located
 }
 
 // async function createRide(data){

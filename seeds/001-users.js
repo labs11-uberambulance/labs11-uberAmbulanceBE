@@ -28,7 +28,7 @@ exports.seed = function(knex, Promise) {
       ...users[i],
       name: `driver ${i}`,
       firebase_id: `driver${i}FIREBASE`,
-      user_type: "drivers"
+      user_type: "drivers",
     };
   }
   return (

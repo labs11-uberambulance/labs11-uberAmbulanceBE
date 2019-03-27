@@ -7,7 +7,7 @@ const protect = require("../auth/auth-mw").protect; // requires valid firebase t
 const restrict = require("../auth/auth-mw").restrict; // requires firebase user to match ADMIN_FIREBASE in .env
 // routes imports
 
-const userRoutes = require("../routes/users-route.js");
+const userRoutes = require("../routes/users-routes.js");
 const ridesRoutes = require("../routes/rides-route.js");
 const userRoutesAdmin = require("../routes/users-routes-admin.js");
 const testAuthRoute = require("../auth/test-auth-route");

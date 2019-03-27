@@ -17,6 +17,7 @@ function find() {
   return db("users").select("id", "name");
 }
 function findBy(filter) {
+  console.log(filter)
   return db("users").where(filter);
 }
 async function findMothers() {
