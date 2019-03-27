@@ -6,7 +6,7 @@ exports.seed = async function(knex, Promise) {
   // get "mothers users"
   const mothersUsers = await Users.findBy({ user_type: "mothers" }).map(
     user => {
-      const { login, firebase_id } = user;
+      const { firebase_id } = user;
       const address =
         Math.random() > 0.2
           ? faker.address.streetAddress()
@@ -30,7 +30,7 @@ exports.seed = async function(knex, Promise) {
         caretaker_name: Math.random() > 0.7 ? faker.name.findName() : "",
         due_date: faker.date.between(now, later),
         hospital: hospitals[Math.floor(Math.random() * hospitals.length)],
-        email: login.includes("@") ? login : ""
+        email: ""
       };
     }
   );

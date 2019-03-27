@@ -5,7 +5,7 @@ exports.seed = async function(knex, Promise) {
   // get "drivers users"
   const driversUsers = await Users.findBy({ user_type: "drivers" }).map(
     user => {
-      const { login, firebase_id } = user;
+      const { firebase_id } = user;
       const address = faker.address.streetAddress();
       return {
         firebase_id,
@@ -20,10 +20,11 @@ exports.seed = async function(knex, Promise) {
           precision: 0.000001
         }),
         // assume drivers have email even if login is with phone
-        email: login.includes("@") ? login : faker.internet.email(),
+        email: faker.internet.email(),
         price: faker.random.number({ min: 200, max: 500 }),
         active: Math.random() > 0.5 ? true : false,
-        bio: faker.lorem.sentences("4")
+        bio: faker.lorem.sentences("4"),
+        photo_url: faker.image.people()
       };
     }
   );
