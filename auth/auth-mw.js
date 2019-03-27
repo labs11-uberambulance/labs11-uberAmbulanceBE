@@ -12,9 +12,16 @@ admin.initializeApp(); // remember to set GOOGLE_CLOUD_PROJECT in .env
 // mw to protect a route, check that user is auth'd using firebase
 async function protect(req, res, next) {
   const idToken = req.headers.authorization;
+  // console.log(idToken);
   // for testing
   if (process.env.DB_ENV === "testing") {
-    req.user = { user_id: "testing" };
+    if (idToken === "motherToken") {
+      req.user = { user_id: "mother0FIREBASE" };
+    } else if (idToken === "driverToken") {
+      req.user = { user_id: "driver0FIREBASE" };
+    } else {
+      req.user = { user_id: "test" };
+    }
     return next();
   }
   // was firebaseId supplied?

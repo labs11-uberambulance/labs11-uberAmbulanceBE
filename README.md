@@ -187,9 +187,9 @@ Authorization: "eyJhbG...";
 
 ## Login/Registration
 
-| Method   | URL        | Description                                                                                                          |
-| -------- | ---------- | -------------------------------------------------------------------------------------------------------------------- |
-| TODO-GET | /api/users | Returns user data matching firebase id found in decoded auth token. If no user is found, a new user will be created. |
+| Method | URL        | Description                                                                                                                                                                             |
+| ------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | /api/users | Returns user data matching firebase id found in decoded auth token. If no user is found, a new user will be created. Returns JSON with user data and mother/driver data if it is found. |
 
 ## Onboarding
 
