@@ -185,10 +185,10 @@ Authorization: "eyJhbG...";
 
 ## Onboarding
 
-| Method   | URL                    | Description                                                                                                                                                                                                                                                                                                              |
-| -------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| POST     | /api/users/onboard/:id | User ID expected in request URL. Include `user_type: "type"` and `typeData : { type_data }` in request body where type is `"mother"` or `"driver"` and `type_data` corresponds to the appropriate [mother](##Mother-data) or [driver](##Driver-data) model. Creates a mother or driver with firebase_id matching `user`. |
-| TODO-PUT | /api/users/update/:id  | User ID expected in request URL. Include mother or driver data in request body. Mother/Driver will be updated with request data.                                                                                                                                                                                         |
+| Method   | URL                    | Description                                                                                                                                                                                                                                                                                                           |
+| -------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST     | /api/users/onboard/:id | User ID expected in request URL. Include `user_type: "type"` and `typeData : { type_data }` in request body where type is `"mother"` or `"driver"` and `type_data` conforms to the appropriate [mother](##Mother-data) or [driver](##Driver-data) model. Creates a mother or driver with firebase_id matching `user`. |
+| TODO-PUT | /api/users/update/:id  | User ID expected in request URL. Include mother or driver data in request body. Mother/Driver will be updated with request data.                                                                                                                                                                                      |
 
 ## Rides
 
