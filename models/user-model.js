@@ -7,6 +7,7 @@ module.exports = {
   findById,
   findByUserType,
   findMothers,
+  findMothersBy,
   findDrivers,
   remove,
   register
@@ -20,25 +21,20 @@ function findBy(filter) {
 async function findMothers() {
   try {
     const moms = await db("users")
-      // .select(
-      //   "id",
-      //   "name",
-      //   "login",
-      //   "firebase_id",
-      //   "phone"
-      //   "mothers.address",
-      //   "mothers.village",
-      //   "mothers.caretaker_name",
-      //   "mothers.due_date",
-      //   "mothers.hospital",
-      //   "mothers.email"
-      // )
-      // .from("users")
       .innerJoin("mothers", "mothers.firebase_id", "users.firebase_id")
       .where({ user_type: "mothers" });
     return moms;
   } catch (error) {
-    throw new Error("Could not find any mothers");
+    throw new Error("Could not findMothers");
+  }
+}
+async function findMothersBy(filter) {
+  // console.log("Filter: ", filter);
+  try {
+    const moms = await db("mothers").where(filter);
+    return moms;
+  } catch (error) {
+    throw new Error(`Could not findMothersBy(${filter})`);
   }
 }
 async function findDrivers() {
@@ -72,7 +68,7 @@ async function findById(id) {
     .select("id", "name", "phone")
     .where({ id })
     .first();
-  console.log(user);
+  // console.log(user);
   return user;
 }
 

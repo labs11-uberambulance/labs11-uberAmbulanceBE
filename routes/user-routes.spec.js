@@ -9,6 +9,8 @@ beforeAll(async done => {
   await db.seed.run();
   return done();
 });
+// !! note: we are seeding >500 users, half "mothers", "half drivers".
+// at the moment these tests are basically integration tests since they are interacting with the database and written to expect seed data to be there.
 
 const testRoute = "/api/users";
 const adminTestRoute = "/api/admin/users";
@@ -20,11 +22,19 @@ describe("Test Users Routes (non-admin)", () => {
       expect(res.status).toEqual(201);
     });
   });
+  describe(`GET ${testRoute}`, () => {
+    it("Should return mother matching firebase_id", async () => {
+      const res = await request(server)
+        .get(`${testRoute}`)
+        .set("Authorization", "motherToken");
+      // console.log("HERE", res.body);
+      expect(res.body.motherData).toEqual(expect.any(Array));
+    });
+  });
 });
 
 describe("Test Users Routes for Admin", () => {
   describe(`GET ${adminTestRoute}`, () => {
-    // note: we are seeding >500 users, half "mothers", "half drivers". get response length check assumes seed file is set up this way.
     it("Should return 200 ok and array", async () => {
       const res = await request(server).get(`${adminTestRoute}`);
       expect(res.body).toEqual(expect.any(Array));
