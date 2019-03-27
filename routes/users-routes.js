@@ -11,10 +11,10 @@ router.get("/", async (req, res) => {
       // user found return mother/driver data if exists
       if (user.user_type === "mothers") {
         const motherData = await Users.findMothersBy({ firebase_id: user_id });
-        res.status(200).json({ motherData });
+        res.status(200).json({ user, motherData });
       } else if (user.user_type === "drivers") {
         const driverData = await Users.findDriversBy({ firebase_id: user_id });
-        res.status(200).json({ driverData });
+        res.status(200).json({ user, driverData });
       } else {
         // console.log("user found, ", user);
         res.status(200).json({ user });

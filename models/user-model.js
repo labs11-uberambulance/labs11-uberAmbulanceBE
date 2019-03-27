@@ -9,6 +9,7 @@ module.exports = {
   findMothers,
   findMothersBy,
   findDrivers,
+  findDriversBy,
   remove,
   register
 };
@@ -45,6 +46,14 @@ async function findDrivers() {
     return drivers;
   } catch (error) {
     throw new Error("Could not find any drivers");
+  }
+}
+async function findDriversBy(filter) {
+  try {
+    const drivers = await db("drivers").where(filter);
+    return drivers;
+  } catch (error) {
+    throw new Error(`Could not findDriversBy(${filter})`);
   }
 }
 async function findByUserType(user) {
