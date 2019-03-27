@@ -1,0 +1,22 @@
+module.exports = [
+  "Nkondo",
+  "Kakoge",
+  "Nkone",
+  "Namabuga",
+  "Kaliro",
+  "Buyabi",
+  "Buwaya",
+  "Ikulwe",
+  "Busesa",
+  "Bukoyo",
+  "Kibuku",
+  "Kadama",
+  "Nabukalu",
+  "Wandago",
+  "Magamaga",
+  "Bukanya",
+  "Nakaiza",
+  "Namutumba",
+  "Kakira",
+  "Namungalwe"
+];
