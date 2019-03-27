@@ -52,7 +52,7 @@ describe("Test Users Routes for Admin", () => {
         const res = await request(server).get(`${adminTestRoute}/mothers`);
         expect(res.body).toEqual(expect.any(Array));
         expect(res.status).toEqual(200);
-        expect(res.body.length).toBeGreaterThan(250);
+        expect(res.body.length).toBeGreaterThan(249);
       });
     });
 
@@ -61,7 +61,7 @@ describe("Test Users Routes for Admin", () => {
         const res = await request(server).get(`${adminTestRoute}/drivers`);
         expect(res.body).toEqual(expect.any(Array));
         expect(res.status).toEqual(200);
-        expect(res.body.length).toBeGreaterThan(250);
+        expect(res.body.length).toBeGreaterThan(249);
       });
     });
   });
