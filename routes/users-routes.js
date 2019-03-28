@@ -87,26 +87,32 @@ router.put("/update/:id", async (req, res) => {
   }
 
   try {
-    // update user
-    let update = { ...req.body.user };
-    const [updatedUser] = await Users.updateUser({ id }, update);
-    // check if user updated
-    if (updatedUser) {
-      // once user is updated, update mother/driver
-      if (req.body.mother) {
-        // update mother
-        console.log("now update mother");
-      } else if (req.body.driver) {
-        // update driver
-        console.log("now update driver");
+    // if user data included, update user
+    if (req.body.user) {
+      let update = { ...req.body.user };
+      const [updatedUser] = await Users.updateUser({ id }, update);
+      // check if user updated
+      if (updatedUser) {
+        // if no mother/driver, return updated
+        // console.log(updatedUser);
+        if (!req.body.mother && !req.body.driver) {
+          res.status(200).json({ message: `User updated` });
+          return;
+        }
+      } else {
+        // user failed to update
+        throw "User failed to update";
       }
-      // no mother/driver, return updated
-      // console.log(updatedUser);
-      res.status(200).json({ message: `User updated` });
-      return;
-    } else {
-      // user failed to update
-      throw "User failed to update";
+    }
+    // if mother data included, update mother
+    if (req.body.mother) {
+      // update mother
+      console.log("now update mother");
+    }
+    // if driver data included, update driver
+    if (req.body.driver) {
+      // update driver
+      console.log("now update driver");
     }
   } catch (error) {
     res.status(500).json({ message: "user failed to update." });
