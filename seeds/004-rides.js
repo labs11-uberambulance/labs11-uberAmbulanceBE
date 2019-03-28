@@ -4,11 +4,12 @@ const hospitals = require("../data/hospitals");
 
 exports.seed =  async function(knex, Promise) {
 
-  const motherIDs = (await Users.findMothers()).map(({id})=>{
-    return id
+  const motherIDs = (await Users.findMothers()).map(user =>{
+    return {"id":user.id, "latitude": user.latitude, "longitude": user.longitude, "hospital": user.hospital}
   })
-  const driverIDs = (await Users.findDrivers()).map(({id})=>{
-    return id
+  console.log(motherIDs)
+  const driverIDs = (await Users.findDrivers()).map(user =>{
+    return {"id":user.id, "latitude": user.latitude, "longitude": user.longitude}
   })
   function createFakeUser(i) {
     const wait_min = faker.random.number({
@@ -17,27 +18,18 @@ exports.seed =  async function(knex, Promise) {
     })
     const maxMom = motherIDs.length;
     const maxDriver = driverIDs.length;
-    console.log(maxDriver)
     const randomMomIndex= faker.random.number({max:maxMom, min: 0});
     const randomDriverIndex= faker.random.number({max:maxDriver, min: 0})
-    const mother_id = motherIDs[randomMomIndex];
-    const driver_id =driverIDs[randomDriverIndex];
-    console.log(randomMomIndex)
-    console.log(driver_id)
+    const mother = motherIDs[randomMomIndex];
+    const driver = driverIDs[randomDriverIndex];
+    const mother_id = mother.id;
+    const driver_id = driver.id;
     const start_address = {
-      latitude: faker.random.number({
-        max: 1.1,
-        min: 0.3,
-        precision: 0.000001
-      }),
-      longitude: faker.random.number({
-        min: 33.2,
-        max: 33.9,
-        precision: 0.000001
-      })
-    }
+       "latitude": mother.latitude,
+       "longitude": mother.longitude
+      }
     // const mother = await Users.findBy({"id": mother_id})
-    const destination = hospitals[Math.floor(Math.random() * hospitals.length)];
+    const destination = mother.hospital;
     return{
       request_time: faker.date.past(),
       mother_id,
