@@ -12,11 +12,10 @@ module.exports = {
 };
 
 async function findDrivers(lat, long){
-    
-    const maxLng = long + 2.75;
-    const minLng = long - 2.75;
-    const maxLat = lat + 2.75;
-    const minLat = lat - 2.75;
+    const maxLng = long + .25;
+    const minLng = long - .25;
+    const maxLat = lat + .25;
+    const minLat = lat - .25;
     // Find Active Drivers
     const drivers = await Users.findDrivers();
     const driversInArea = [];
@@ -49,7 +48,6 @@ async function findDrivers(lat, long){
   // Return Google distance information 
    const results = await axios.get(url).then(res=>res.data).catch(err=>console.log(err))
     // Parse Google Distance information to return distance, and driver.
-    console.log(results.rows[0].elements)
     var finalDriverDistance =[]
     results.rows[0].elements.forEach((driver, i) =>{
       if(driver.status === "OK"){
