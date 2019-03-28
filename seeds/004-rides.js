@@ -7,7 +7,6 @@ exports.seed =  async function(knex, Promise) {
   const motherIDs = (await Users.findMothers()).map(user =>{
     return {"id":user.id, "latitude": user.latitude, "longitude": user.longitude, "hospital": user.hospital}
   })
-  console.log(motherIDs)
   const driverIDs = (await Users.findDrivers()).map(user =>{
     return {"id":user.id, "latitude": user.latitude, "longitude": user.longitude}
   })
@@ -28,7 +27,6 @@ exports.seed =  async function(knex, Promise) {
        "latitude": mother.latitude,
        "longitude": mother.longitude
       }
-    // const mother = await Users.findBy({"id": mother_id})
     const destination = mother.hospital;
     return{
       request_time: faker.date.past(),
