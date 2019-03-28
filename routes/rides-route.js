@@ -10,9 +10,9 @@ const Rides = require("../models/rides-model.js");
 // /api/drivers/	POST 
 router.post('/drivers', (req, res) => {
     const lat = req.body.lat;
-    console.log(lat)
+   
     const long = req.body.long;
-    console.log(long)
+    
         Rides.findDrivers(lat, long)
         .then(
             data => {res.status(201).json(data);}
