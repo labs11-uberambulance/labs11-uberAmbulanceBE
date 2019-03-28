@@ -12,10 +12,10 @@ module.exports = {
 };
 
 async function findDrivers(lat, long){
-    const maxLng = long + .25;
-    const minLng = long - .25;
-    const maxLat = lat + .25;
-    const minLat = lat - .25;
+    const maxLng = long + .125;
+    const minLng = long - .125;
+    const maxLat = lat + .125;
+    const minLat = lat - .125;
     // Find Active Drivers
     const drivers = await Users.findDrivers();
     const driversInArea = [];
