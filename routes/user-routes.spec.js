@@ -28,7 +28,7 @@ describe("Test Users Routes (non-admin)", () => {
         .get(`${testRoute}`)
         .set("Authorization", "motherToken");
       // console.log("HERE", res.body);
-      expect(res.body.motherData).toEqual(expect.any(Array));
+      expect(res.body.motherData).toEqual(expect.any(Object));
     });
   });
   describe(`POST ${testRoute}/onboard/:id`, () => {
