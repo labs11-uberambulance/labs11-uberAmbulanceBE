@@ -46,12 +46,21 @@ async function findDrivers(lat, long){
      console.log(destinations)
     // Format Google URL with Origin, Destinations and API
    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${long}&destinations=${destinations.join('')}key=${process.env.MYMAPSKEY}`
-//    // Return Google distance information 
+  // Return Google distance information 
    const results = await axios.get(url).then(res=>res.data).catch(err=>console.log(err))
-    //  Check that res.status === "OK"
-    //  var finalDriverDistance = results.(distance)
+    // Parse Google Distance information to return distance, and driver.
+    console.log(results.rows[0].elements)
+    var finalDriverDistance =[]
+    results.rows[0].elements.forEach((driver, i) =>{
+      if(driver.status === "OK"){
+        finalDriverDistance.push({"id": i, "distance": driver.distance, "driver": driversInArea[i]})
+      }
+      else{
+        finalDriverDistance.push({"id": i, "driver": driversInArea[i]})
+      }
+  })
 // YOU ARE HERE
-   return result
+   return finalDriverDistance
 
 }
 
