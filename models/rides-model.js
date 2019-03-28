@@ -1,4 +1,5 @@
 const db = require("../data/dbConfig.js");
+const Users = require('./user-model.js')
 const axios = require('axios');
 module.exports = {
     findDrivers,
@@ -10,29 +11,43 @@ module.exports = {
 };
 
 async function findDrivers(lat, long){
-    // Find 5 active drivers
-    const activeDrivers = await db('drivers').where({"active": true}).select("latitude", "longitude").limit(5)
+    
+    const maxLng = long + 1;
+    const minLng = long - 1;
+    const maxLat = lat + 1;
+    const minLat = lat - 1;
+    // Find Active Drivers
+    const drivers = await Users.findDrivers();
+    const driversInArea = [];
+    drivers.forEach(driver => {
+        if (driver.longitude < maxLng && driver.longitude > minLng) {
+            if (driver.latitude < maxLat && driver.latitude > minLat) {
+                driversInArea.push(driver)
+            }
+        }
+    })
+    console.log(driversInArea)
     //Convert Drivers Locations to URL Format
-    var destinations =[]
-    activeDrivers.forEach((local, i) =>{
-        console.log(i)
-        if(i ===4){
-            const lati = parseInt(local.latitude)
-            const longi = parseInt(local.longitude)
-            destinations.push(`${lati}%2C${longi}&`)
-           }
-           else{
-           const lati = parseInt(local.latitude)
-            const longi = parseInt(local.longitude)
-            destinations.push(`${lati}%2C${longi}%7C`)
-           }
-     })
+    // var destinations =[]
+    // activeDrivers.forEach((local, i) =>{
+    //     console.log(i)
+    //     if(i ===4){
+    //         const lati = parseInt(local.latitude)
+    //         const longi = parseInt(local.longitude)
+    //         destinations.push(`${lati}%2C${longi}&`)
+    //        }
+    //        else{
+    //        const lati = parseInt(local.latitude)
+    //         const longi = parseInt(local.longitude)
+    //         destinations.push(`${lati}%2C${longi}%7C`)
+    //        }
+    //  })
     // Format Google URL with Origin, Destinations and API
-   const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${long}&destinations=${destinations.join('')}key=${process.env.MYMAPSKEY}`
-   // Return Google distance information 
-   const result = await axios.get(url).then(res=>res.data).catch(err=>console.log(err))
-    //  Check that res.status === "OK"
-   return result
+//    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${long}&destinations=${destinations.join('')}key=${process.env.MYMAPSKEY}`
+//    // Return Google distance information 
+//    const result = await axios.get(url).then(res=>res.data).catch(err=>console.log(err))
+//     //  Check that res.status === "OK"
+//    return result
 }
 
 async function createRide(request){
@@ -55,21 +70,3 @@ async function update(id, changes){
 }
 
 
-// const { lng, lat } = mother.location;
-
-// const maxLng = lng + 5
-// const minLng = lng - 5
-// const maxLat = lat + 5;
-// const minLat = lat - 5;
-
-// const drivers = Drivers.getAll();
-
-// const driversInArea = [];
-
-// drivers.forEach(driver => {
-//     if (driver.lng < maxLng && driver.lat > minLng) {
-//         if (driver.lat < maxLat && driver.lat > minLat) {
-//             driversInArea.push(driver)
-//         }
-//     }
-// })
