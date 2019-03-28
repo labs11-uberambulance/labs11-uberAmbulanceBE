@@ -8,7 +8,8 @@ module.exports = {
     mothersRides,
     driversRides,
     update,
-    createRide
+    createRide,
+    findLocal
 };
 
 async function findDrivers(lat, long){
@@ -48,6 +49,7 @@ async function findDrivers(lat, long){
   // Return Google distance information 
    const results = await axios.get(url).then(res=>res.data).catch(err=>console.log(err))
     // Parse Google Distance information to return distance, and driver.
+    console.log(results)
     var finalDriverDistance =[]
     results.rows[0].elements.forEach((driver, i) =>{
       if(driver.status === "OK"){
@@ -83,4 +85,8 @@ async function update(id, changes){
     return await db('rides').where({id}).update({changes}).then(count => (count >0 ? findRide(id):null))
 }
 
-
+async function findLocal(village){
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${village}&region=ug&components=country:UG&key=${process.env.MYMAPSKEY}`
+    const results = await axios.get(url).then(res=>res.data).catch(err=>console.log(err))
+    return results
+}

@@ -25,10 +25,8 @@ router.post('/drivers', (req, res) => {
 
 // Create A New Ride
 router.post('/new-ride', (req, res) => {
-    // IF STATEMENT ABOUT BEING UNREGISTERED
-    
     // REGISTERED ROUTE
-    const start_address = JSON.stringify(req.body.start_address);
+    var start_address = JSON.stringify(req.body.start_address);
     const destination_address = JSON.stringify(req.body.destination_address);
     const request = {
         ...req.body,
@@ -58,7 +56,7 @@ router.get('/', (req, res) => {
         res.status(500).json({message:'Cannot locate that ride', error})
     })
 });
-// Get a mothers rides
+// Get a mothers ridesk
 router.get('/mother', (req, res) => {
     const userId = req.body.mother_id;
     Rides.mothersRides(userId)
@@ -88,4 +86,8 @@ router.put('/', (req, res) => {
     Rides.update(id, changes)
 });
 
+// Create Text Ride
+router.post('/texting', (req, res) => {
+    
+});
 module.exports = router;
