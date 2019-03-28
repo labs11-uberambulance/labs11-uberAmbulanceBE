@@ -94,7 +94,6 @@ router.put("/update/:id", async (req, res) => {
       // check if user updated
       if (updatedUser) {
         // if no mother/driver, return updated
-        // console.log(updatedUser);
         if (!req.body.mother && !req.body.driver) {
           res.status(200).json({ message: `User ${updatedUser} updated` });
           return;
@@ -108,7 +107,6 @@ router.put("/update/:id", async (req, res) => {
     if (req.body.mother) {
       // find mother id
       firebase_id = user.firebase_id;
-      // console.log(firebase_id);
       const [mother] = await Users.findMothersBy({ firebase_id });
       if (!mother) {
         // no mother matching user's firebase id
@@ -130,7 +128,6 @@ router.put("/update/:id", async (req, res) => {
     if (req.body.driver) {
       // find driver id
       firebase_id = user.firebase_id;
-      // console.log(firebase_id);
       const [driver] = await Users.findDriversBy({ firebase_id });
       if (!driver) {
         // no driver matching user's firebase id
