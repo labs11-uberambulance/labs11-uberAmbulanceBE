@@ -1,4 +1,4 @@
-exports.up = function(knex, Promise) {
+staexports.up = function(knex, Promise) {
   return knex.schema.createTable("rides", function(tbl) {
     tbl.increments("id");
     tbl

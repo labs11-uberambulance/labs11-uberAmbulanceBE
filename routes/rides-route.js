@@ -28,7 +28,15 @@ router.post('/new-ride', (req, res) => {
     // IF STATEMENT ABOUT BEING UNREGISTERED
     
     // REGISTERED ROUTE
-    const request = req.body
+    const start_address = JSON.stringify(req.body.start_address);
+    const destination_address = JSON.stringify(req.body.destination_address);
+    const request = {
+        ...req.body,
+        "start_address": start_address,
+        "destination_address":destination_address
+    }
+
+    console.log("new:", request)
     Rides.createRide(request)
     .then(
         data => {res.status(201).json(data);}
