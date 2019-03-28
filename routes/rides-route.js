@@ -42,6 +42,7 @@ router.post('/new-ride', (req, res) => {
         data => {res.status(201).json(data);}
     )
     .catch( error =>{
+        console.log(error)
         res.status(500).json({ message: `Failed to Coordinate Ride`, error })
     })
 });

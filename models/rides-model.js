@@ -1,7 +1,6 @@
 const db = require("../data/dbConfig.js");
 const Users = require('./user-model.js')
 const axios = require('axios');
-const moment = require('moment');
 require('dotenv').config(); 
 module.exports = {
     findDrivers,
@@ -64,7 +63,8 @@ async function findDrivers(lat, long){
 }
 
 async function createRide(request){
-    const [id] = await db('rides').insert({request})
+    console.log('model', request)
+    const [id] = await db('rides').insert(request, "id")
     console.log(id)
     return findRide(id)
 }
