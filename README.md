@@ -20,8 +20,16 @@ user = {
   // string required
   phone: "phone_number",
   // string blank if not provided
-  user_type: "mothers/drivers"
+  user_type: "mothers/drivers",
   // string, blank if onboarding not complete, limited to "mothers" or "drivers"
+  address: "address string",
+  // string, 500 char limit, street address or description
+  village: "village name",
+  // string, must match location findable by google maps API
+  latitude: 1.234567,
+  // decimal, GPS latitude coord
+  longitude: 1.234567
+  // decimal, GPS longitude coord
 };
 ```
 
@@ -35,14 +43,6 @@ mother = {
   // int, unique, set internally
   firebase_id: "firebase_id_here",
   // string, required, foreign key references users table
-  address: "address string",
-  // string, 500 char limit, street address or description
-  village: "village name",
-  // string, must match location findable by google maps API
-  latitude: 1.234567,
-  // decimal, GPS latitude coord
-  longitude: 1.234567,
-  // decimal, GPS longitude coord
   caretaker_name: "name_here",
   // string, if provided by completing "Caretaker" onboarding
   due_date: "date string",
@@ -66,14 +66,6 @@ driver = {
   // int, unique, set internally
   firebase_id: "firebase_id_here",
   // string, required, foreign key references users table
-  address: "address string",
-  // string, 500 char limit, street address or description
-  village: "village name",
-  // string, must match location findable by google maps API
-  latitude: 1.234567,
-  // decimal, GPS latitude coord
-  longitude: 1.234567,
-  // decimal, GPS longitude coord
   email: "email@b.c",
   // string, if provided
   price: 345,
@@ -187,9 +179,9 @@ Authorization: "eyJhbG...";
 
 ## Login/Registration
 
-| Method   | URL        | Description                                                                                                          |
-| -------- | ---------- | -------------------------------------------------------------------------------------------------------------------- |
-| TODO-GET | /api/users | Returns user data matching firebase id found in decoded auth token. If no user is found, a new user will be created. |
+| Method | URL        | Description                                                                                                                                                                             |
+| ------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | /api/users | Returns user data matching firebase id found in decoded auth token. If no user is found, a new user will be created. Returns JSON with user data and mother/driver data if it is found. |
 
 ## Onboarding
 

@@ -16,7 +16,8 @@
     "knex-cleaner": "^1.1.4",
     "nodemon": "^1.18.10",
     "pg": "^7.9.0",
-    "sqlite": "^3.0.2"
+    "sqlite": "^3.0.2",
+    "twilio": "^3.29.2"
   },
   "devDependencies": {
     "cross-env": "^5.2.0",

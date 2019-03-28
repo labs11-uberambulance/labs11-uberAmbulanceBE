@@ -22,7 +22,7 @@ exports.up = function(knex, Promise) {
     tbl.string("destination", 500);
     tbl.json("destination_address");
     tbl.string("ride_status");
-    tbl.timestamps();
+    tbl.timestamps(true, true);
   });
 };
 
