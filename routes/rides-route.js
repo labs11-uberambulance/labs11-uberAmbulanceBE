@@ -11,41 +11,70 @@ const Rides = require("../models/rides-model.js");
 router.post('/drivers', (req, res) => {
     const lat = req.body.lat;
     const long = req.body.long;
-    const location = req.body.village;
-    if(lat===null || long===null){
-        Rides.findDrivers(location)
-        .then(
-            data => {res.status(201).json(data);}
-        )
-        .catch( err =>{
-            res.status(500).json({ message: `Failed to Coordinate Ride`, error: err })
-        })
-    } else{
         Rides.findDrivers(lat, long)
         .then(
             data => {res.status(201).json(data);}
         )
-        .catch( err =>{
-            res.status(500).json({ message: `Failed to Coordinate Ride`, error: err })
+        .catch( error =>{
+            res.status(500).json({ message: `Failed to Coordinate Ride`, error })
         })
-    }
-});
+    });
 
 
+// Create A New Ride
 router.post('/new-ride', (req, res) => {
+    // IF STATEMENT ABOUT BEING UNREGISTERED
     
+    // REGISTERED ROUTE
+    const request = req.body
+    Rides.createRide(request)
+    .then(
+        data => {res.status(201).json(data);}
+    )
+    .catch( error =>{
+        res.status(500).json({ message: `Failed to Coordinate Ride`, error })
+    })
 });
 
+// Get a specified Ride
 router.get('/', (req, res) => {
-    
+    const rideId = req.body.ride_id
+    Rides.findRide(rideId)
+    .then(
+        data => res.status(200).json(data)
+    )
+    .catch(error=>{
+        res.status(500).json({message:'Cannot locate that ride', error})
+    })
+});
+// Get a mothers rides
+router.get('/mother', (req, res) => {
+    const userId = req.body.mother_id;
+    Rides.mothersRides(userId)
+    .then(
+        data => res.status(200).json(data)
+    )
+    .catch(error=>{
+        res.status(500).json({message:'Cannot locate their rides', error})
+    })
+});
+// Get a drivers rides
+router.get('/driver', (req, res) => {
+    const userId = req.body.driver_id;
+    Rides.mothersRides(userId)
+    .then(
+        data => res.status(200).json(data)
+    )
+    .catch(error=>{
+        res.status(500).json({message:'Cannot locate their rides', error})
+    })
 });
 
-router.get('/', (req, res) => {
-    
-});
-
+// Update a given ride
 router.put('/', (req, res) => {
-    
+    const id = req.body.ride_id
+    const changes = req.body
+    Rides.update(id, changes)
 });
 
 module.exports = router;
