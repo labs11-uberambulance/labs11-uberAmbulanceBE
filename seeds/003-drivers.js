@@ -8,8 +8,6 @@ exports.seed = async function(knex, Promise) {
       const { firebase_id } = user;
       return {
         firebase_id,
-        // assume drivers have email even if login is with phone
-        email: faker.internet.email(),
         price: faker.random.number({ min: 200, max: 500 }),
         active: Math.random() > 0.5 ? true : false,
         bio: faker.lorem.sentences("4"),

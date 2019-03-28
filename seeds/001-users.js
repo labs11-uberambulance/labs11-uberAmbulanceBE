@@ -8,14 +8,16 @@ exports.seed = function(knex, Promise) {
       Math.random() > 0.2
         ? faker.address.streetAddress()
         : faker.lorem.sentences("4");
-
+    const user_type = i % 2 ? "mothers" : "drivers";
     return {
       name: faker.name.findName(),
       firebase_id: faker.random.alphaNumeric(8),
       phone,
-      user_type: i % 2 ? "mothers" : "drivers",
+      user_type,
       address,
       village: towns[Math.floor(Math.random() * towns.length)],
+      // assume drivers have email even if login is with phone
+      email: user_type === "drivers" ? faker.internet.email() : null,
       // Uganda between -1.4, 4.2, faker doesn't play nice with neg nums
       // latitude: faker.random.number({ max: 5.6, precision: 0.000001 }) - 1.4,
       // INSTEAD using boundaries: 0.3, 1.1 (safemothers service area)
@@ -58,7 +60,7 @@ exports.seed = function(knex, Promise) {
       user_type: "drivers"
     };
   }
-  // edit accounts 21 & 22 to have real firebase_ids
+  // edit accounts 21, 22, 23 to have real firebase_ids
   users[20] = {
     ...users[20],
     name: "birthride-test-mother",
@@ -77,6 +79,16 @@ exports.seed = function(knex, Promise) {
     firebase_id: "eBmX5Et0P4TAGHUfPPyUcnsAS963", // belongs to ph: 11958306948
     user_type: ""
   };
+  // edit 501 & 502 to be users who have not onboarded
+  users[500] = {
+    ...users[500],
+    user_type: ""
+  };
+  users[501] = {
+    ...users[501],
+    user_type: ""
+  };
+
   return (
     knex("users")
       // Delete existing entries handled in 000-cleaner.js
