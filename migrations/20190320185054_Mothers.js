@@ -11,7 +11,6 @@ exports.up = function(knex, Promise) {
     tbl.string("caretaker_name", 500);
     tbl.date("due_date");
     tbl.string("hospital", 500);
-    tbl.string("email");
     tbl.timestamps(true, true);
   });
 };

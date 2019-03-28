@@ -4,6 +4,8 @@
 
 # Data Schemas
 
+Note: unless noted, string types are 255 char limit.
+
 ## User data
 
 Every user who completes OAuth process should have User data, FE (Web, AND, IOS) is responsible for making the appropriate request to the API upon successful completion of OAuth flow.
@@ -14,8 +16,6 @@ user = {
   // int, unique, set internally
   name: "name_here",
   // string
-  login: "email/phone_here",
-  // string depending on login type
   firebase_id: "firebase_id_here",
   // string required
   phone: "phone_number",
@@ -26,6 +26,8 @@ user = {
   // string, 500 char limit, street address or description
   village: "village name",
   // string, must match location findable by google maps API
+  email: "email@b.c",
+  // string, if provided
   latitude: 1.234567,
   // decimal, GPS latitude coord
   longitude: 1.234567
@@ -47,10 +49,8 @@ mother = {
   // string, if provided by completing "Caretaker" onboarding
   due_date: "date string",
   // string, format: YYYY-MM-DD
-  hospital: "hospital name",
+  hospital: "hospital name"
   // string, must match location findable by google maps API
-  email: "email@b.c"
-  // string, if provided
 };
 ```
 
@@ -66,13 +66,13 @@ driver = {
   // int, unique, set internally
   firebase_id: "firebase_id_here",
   // string, required, foreign key references users table
-  email: "email@b.c",
-  // string, if provided
   price: 345,
   // int, maximum price for ride
   active: false,
   // bool, driver status (accepting rides?)
-  bio: "bio here"
+  bio: "bio here",
+  // string, 500 char limit
+  photo_url: "http://pic.driver.com"
   // string, 500 char limit
 };
 ```
@@ -185,10 +185,10 @@ Authorization: "eyJhbG...";
 
 ## Onboarding
 
-| Method    | URL                    | Description                                                                                                                                            |
-| --------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| TODO-POST | /api/users/onboard/:id | User ID expected in request URL. Include mother or driver data in request body. Creates a mother or driver based on data received in the request body. |
-| TODO-PUT  | /api/users/update/:id  | User ID expected in request URL. Include mother or driver data in request body. Mother/Driver will be updated with request data.                       |
+| Method | URL                    | Description                                                                                                                                                                                                                                                                                                           |
+| ------ | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST   | /api/users/onboard/:id | User ID expected in request URL. Include `user_type: "type"` and `typeData : { type_data }` in request body where type is `"mother"` or `"driver"` and `type_data` conforms to the appropriate [mother](##Mother-data) or [driver](##Driver-data) model. Creates a mother or driver with firebase_id matching `user`. |
+| PUT    | /api/users/update/:id  | User ID expected in request URL. Include user, mother or driver data to be updated in request body, user/mother/driver will be updated according to request data. Request body should have shape: `{ user: { user-data }, mother/driver: { mother/driver-data } }`.                                                   |
 
 ## Rides
 

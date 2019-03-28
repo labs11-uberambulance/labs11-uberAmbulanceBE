@@ -8,11 +8,10 @@ exports.up = function(knex, Promise) {
       .references("firebase_id")
       .inTable("users")
       .onUpdate("CASCADE");
-    tbl.string("email", 255);
     tbl.integer("price");
     tbl.boolean("active");
     tbl.string("bio", 500);
-    tbl.string("photo_url");
+    tbl.string("photo_url", 500);
     tbl.timestamps(true, true);
   });
 };
