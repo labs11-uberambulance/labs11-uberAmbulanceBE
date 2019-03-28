@@ -14,7 +14,8 @@ module.exports = {
   findDriversBy,
   remove,
   register,
-  updateUser
+  updateUser,
+  updateMother
 };
 async function add(user) {
   const [id] = await db("users").insert(user, "id");
@@ -106,8 +107,16 @@ async function register(user) {
 }
 
 async function updateUser(filter, userData) {
+  // console.log(filter, userData);
   const updatedId = await db("users")
     .where(filter)
     .update(userData, ["id"]);
-  return [updatedId];
+  return updatedId;
+}
+
+async function updateMother(filter, motherData) {
+  const updatedId = await db("mothers")
+    .where(filter)
+    .update(motherData, ["id"]);
+  return updatedId;
 }

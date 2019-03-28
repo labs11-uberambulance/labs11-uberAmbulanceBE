@@ -34,7 +34,7 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/onboard/:id", async (req, res) => {
-  // user id passed as parameter, this is used to determine mother/driver without depending on mother/driver data to be complete.
+  // creates a mother/driver record corresponding to a user, user id passed as parameter
   const id = req.params.id;
   const userData = await Users.findById(id);
   if (userData.user_type) {
@@ -66,6 +66,52 @@ router.post("/onboard/:id", async (req, res) => {
   } catch (error) {
     console.error("error with POST to /onboard: ", error);
   }
+});
+
+router.put("/update/:id", async (req, res) => {
+  // updates user data, mother or driver data of that user if included
+  const id = req.params.id;
+  // check if user exists
+  const user = await Users.findById(id);
+  if (!user) {
+    res.status(400).json({ message: "user does not exist." });
+    return;
+  }
+  // if user type is not set and mother/driver data is included, need to go to onboarding instead
+  if (!user.user_type && (req.body.mother || req.body.driver)) {
+    res.status(400).json({
+      message:
+        "you can not update mother or driver data if the user has not been onboarded."
+    });
+    return;
+  }
+
+  try {
+    // update user
+    let update = { ...req.body.user };
+    const [updatedUser] = await Users.updateUser({ id }, update);
+    // check if user updated
+    if (updatedUser) {
+      // once user is updated, update mother/driver
+      if (req.body.mother) {
+        // update mother
+        console.log("now update mother");
+      } else if (req.body.driver) {
+        // update driver
+        console.log("now update driver");
+      }
+      // no mother/driver, return updated
+      // console.log(updatedUser);
+      res.status(200).json({ message: `User updated` });
+      return;
+    } else {
+      // user failed to update
+      throw "User failed to update";
+    }
+  } catch (error) {
+    res.status(500).json({ message: "user failed to update." });
+  }
+  // if mother/driver, update
 });
 
 module.exports = router;

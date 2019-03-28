@@ -54,6 +54,37 @@ describe("Test Users Routes (non-admin)", () => {
       expect(res.status).toEqual(400);
     });
   });
+  describe(`PUT ${testRoute}/users/update/:id`, () => {
+    it("Should return 400 if user_type not set and attempting to modify mother/driver.", async () => {
+      const res = await request(server)
+        .put(`${testRoute}/update/23`)
+        .send({
+          user: { something: "anything" },
+          mother: { something: "anything" }
+        });
+      expect(res.status).toEqual(400);
+    });
+    it("Should return 400 if user does not exist", async () => {
+      const res = await request(server)
+        .put(`${testRoute}/update/9999`)
+        .send({
+          dont: "matter"
+        });
+      expect(res.status).toEqual(400);
+    });
+    it("Should return 200 when updating user data", async () => {
+      const res = await request(server)
+        .put(`${testRoute}/update/1`)
+        .send({ user: { phone: "777-777-7777" } });
+      expect(res.status).toEqual(200);
+    });
+    // it("Should return 200 when updating only mother data", async () => {
+    //   const res = await request(server)
+    //     .put(`${testRoute}/update/1`)
+    //     .send({ user: { phone: "777-777-7777" } });
+    //   expect(res.status).toEqual(200);
+    // });
+  });
 });
 
 describe("Test Users Routes for Admin", () => {
