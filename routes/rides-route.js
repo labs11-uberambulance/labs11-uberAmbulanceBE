@@ -86,8 +86,5 @@ router.put('/', (req, res) => {
     Rides.update(id, changes)
 });
 
-// Create Text Ride
-router.post('/texting', (req, res) => {
-    
-});
+
 module.exports = router;
