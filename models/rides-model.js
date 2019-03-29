@@ -33,13 +33,13 @@ async function findDrivers(lat, long){
     driversInArea.forEach((local, i) =>{
         if(local.active){
             if(i === driversInArea.length-1){
-                const lati = parseInt(local.latitude)
-                const longi = parseInt(local.longitude)
+                const lati = local.latitude
+                const longi = local.longitude
                 destinations.push(`${lati}%2C${longi}&`)
                }
                else{
-               const lati = parseInt(local.latitude)
-                const longi = parseInt(local.longitude)
+               const lati = local.latitude
+                const longi = local.longitude
                 destinations.push(`${lati}%2C${longi}%7C`)
             }
         }
@@ -49,20 +49,30 @@ async function findDrivers(lat, long){
     // Format Google URL with Origin, Destinations and API
    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${long}&destinations=${destinations.join('')}key=${process.env.MYMAPSKEY}`
   // Return Google distance information 
-  console.log(url)
+ 
    const results = await axios.get(url).then(res=>res.data).catch(err=>console.log(err))
     // Parse Google Distance information to return distance, and driver.
     console.log(results)
-    var finalDriverDistance =[]
+    
+    var nearest = []
     results.rows[0].elements.forEach((driver, i) =>{
-      if(driver.status === "OK"){
-        finalDriverDistance.push({"id": i, "distance": driver.distance, "driver": driversInArea[i]})
+      if(i < 5 ){
+          nearest.push({"driver": driversInArea[i], "distance": driver.distance, "duration":driver.duration, "id":i})
       }
-      else{
-        finalDriverDistance.push({"id": i, "driver": driversInArea[i]})
+      if(i > 5){
+         for (var i = 0; i< nearest.length; i++){
+                console.log(nearest)
+                if(nearest[i].distance.value < driver.distance.value){
+                }
+                else{
+                  nearest.splice(i, 1, {"driver": driversInArea[i], "distance": driver.distance, "duration":driver.duration, "id":i})
+                  break;
+             }
+         }
       }
-  })
-   return finalDriverDistance
+    })
+    
+   return nearest
 }
 
 async function createRide(request){
