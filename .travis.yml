@@ -1,17 +1,16 @@
 git:
   quiet: true
-# branches:
-#   only:
-#     - master
+branches:
+  only:
+    - master
 language: node_js
 node_js:
   - "10"
 dist: trusty
-services:
-  -postgresql
+services: -postgresql
 cache:
   directories:
-  - node_modules
+    - node_modules
 install:
   - npm install
 before_script:
