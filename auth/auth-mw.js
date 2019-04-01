@@ -6,9 +6,6 @@ module.exports = {
   restrict
 };
 
-// setup firebase-admin:
-admin.initializeApp(); // remember to set GOOGLE_CLOUD_PROJECT in .env
-
 // mw to protect a route, check that user is auth'd using firebase
 async function protect(req, res, next) {
   const idToken = req.headers.authorization;
