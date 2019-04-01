@@ -9,7 +9,7 @@ module.exports = {
     driversRides,
     update,
     createRide,
-    findLocal
+    findLocale
 };
 
 async function findDrivers(lat, long){
@@ -31,37 +31,48 @@ async function findDrivers(lat, long){
     //Convert Drivers Locations to URL Format
     var destinations =[]
     driversInArea.forEach((local, i) =>{
-        console.log(i)
-        if(i === driversInArea.length-1){
-            const lati = parseInt(local.latitude)
-            const longi = parseInt(local.longitude)
-            destinations.push(`${lati}%2C${longi}&`)
-           }
-           else{
-           const lati = parseInt(local.latitude)
-            const longi = parseInt(local.longitude)
-            destinations.push(`${lati}%2C${longi}%7C`)
-           }
+        if(local.active){
+            if(i === driversInArea.length-1){
+                const lati = local.latitude
+                const longi = local.longitude
+                destinations.push(`${lati}%2C${longi}&`)
+               }
+               else{
+               const lati = local.latitude
+                const longi = local.longitude
+                destinations.push(`${lati}%2C${longi}%7C`)
+            }
+        }
+        
      })
      console.log(destinations)
     // Format Google URL with Origin, Destinations and API
    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${long}&destinations=${destinations.join('')}key=${process.env.MYMAPSKEY}`
   // Return Google distance information 
+ 
    const results = await axios.get(url).then(res=>res.data).catch(err=>console.log(err))
     // Parse Google Distance information to return distance, and driver.
     console.log(results)
-    var finalDriverDistance =[]
+    
+    var nearest = []
     results.rows[0].elements.forEach((driver, i) =>{
-      if(driver.status === "OK"){
-        finalDriverDistance.push({"id": i, "distance": driver.distance, "driver": driversInArea[i]})
+      if(i < 5 ){
+          nearest.push({"driver": driversInArea[i], "distance": driver.distance, "duration":driver.duration, "id":i})
       }
-      else{
-        finalDriverDistance.push({"id": i, "driver": driversInArea[i]})
+      if(i > 5){
+         for (var i = 0; i< nearest.length; i++){
+                console.log(nearest)
+                if(nearest[i].distance.value < driver.distance.value){
+                }
+                else{
+                  nearest.splice(i, 1, {"driver": driversInArea[i], "distance": driver.distance, "duration":driver.duration, "id":i})
+                  break;
+             }
+         }
       }
-  })
-// YOU ARE HERE
-   return finalDriverDistance
-
+    })
+    
+   return nearest
 }
 
 async function createRide(request){
@@ -70,7 +81,6 @@ async function createRide(request){
     console.log(id)
     return findRide(id)
 }
-
 
 function findRide(filter){
     return db('rides').where({"id": filter})
@@ -85,7 +95,7 @@ async function update(id, changes){
     return await db('rides').where({id}).update({changes}).then(count => (count >0 ? findRide(id):null))
 }
 
-async function findLocal(village){
+async function findLocale(village){
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${village}&region=ug&components=country:UG&key=${process.env.MYMAPSKEY}`
     const results = await axios.get(url).then(res=>res.data).catch(err=>console.log(err))
     return results

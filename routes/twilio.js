@@ -4,7 +4,6 @@ const twilio = require('../services/twilio');
 const { handle_incoming_messages } = require('../middleware/twilio');
 
 
-
 router.get('/text-me', (req, res, next) => {
     twilio.messages.create({
         body: 'Hello Orlando, from Node',
@@ -17,7 +16,6 @@ router.get('/text-me', (req, res, next) => {
 
 
 router.post('/sms/receiver', handle_incoming_messages)
-
 
 
 
