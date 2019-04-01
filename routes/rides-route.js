@@ -105,7 +105,7 @@ router.post('/request/driver/:firebase_id', async (req, res, next) => {
             const message = { 
                 notification: {
                     title: "You have a new ride request!",
-                    body: ` ${name} is ${distance}km , -price: ${price}`
+                    body: ` ${name} is ${distance}km , -price: USh${price}`
                 },
                 data: { distance, name, phone, price, eta, ride_id: id }
              }
@@ -133,7 +133,7 @@ router.get('/driver/accepts/:ride_id', async (req, res, next) => {
             .select('m.name as mother', 'd.name as driver', 'm.phone as to', 'r.eta', 'r.price as price')
         await twilio.messages.create({
             from: '+19179709371', to,
-            body: `${mother}, ${driver} is on their way, the total price will be $${price}. Estimated time: ${eta}`
+            body: `${mother}, ${driver} is on their way, the total price will be USh${price}. Estimated time: ${eta}mins.`
         })
     } catch (err) {
         console.log(err);
