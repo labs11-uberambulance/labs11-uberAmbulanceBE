@@ -11,7 +11,7 @@ const Rides = require("../models/rides-model.js");
 router.post('/drivers', (req, res) => {
     const lat = req.body.lat;
    
-    const long = req.body.long;
+    const long = req.body.lng;
     
         Rides.findDrivers(lat, long)
         .then(

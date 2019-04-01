@@ -71,7 +71,6 @@ async function findDrivers(lat, long){
          }
       }
     })
-    
    return nearest
 }
 
