@@ -30,6 +30,8 @@ user = {
   // json
   email: "email@b.c",
   // string, if provided
+  FCM_token: "token_here",
+  // string, token set for users who enable push notifications
   created_at: "time",
   // string, set internally
   updated_at: "time"
