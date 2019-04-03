@@ -8,11 +8,8 @@ exports.up = function(knex, Promise) {
       .unique();
     tbl.string("phone", 32);
     tbl.enum("user_type", ["mothers", "drivers", ""]);
-    tbl.string("address", 500);
-    tbl.string("village", 500);
+    tbl.json("location"); // {latlng: "lat,lng", name: "name", descr: "additional info"}
     tbl.string("email");
-    tbl.decimal("latitude", 9, 6);
-    tbl.decimal("longitude", 9, 6);
     tbl.timestamps(true, true);
   });
 };

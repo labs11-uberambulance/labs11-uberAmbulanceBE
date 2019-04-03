@@ -150,8 +150,10 @@ router.put("/update/:id", async (req, res) => {
       return;
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "user failed to update." });
   }
 });
+
 
 module.exports = router;

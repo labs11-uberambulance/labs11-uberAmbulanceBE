@@ -21,17 +21,19 @@ user = {
   phone: "phone_number",
   // string blank if not provided
   user_type: "mothers/drivers",
-  // string, blank if onboarding not complete, limited to "mothers" or "drivers"
-  address: "address string",
-  // string, 500 char limit, street address or description
-  village: "village name",
-  // string, must match location findable by google maps API
+  // string, empty if onboarding not complete, limited to "mothers" or "drivers" otherwise
+  location: {
+    latlng: "lat,lng", // string, lat and long comma separated, no spaces
+    name: "location name", // string
+    descr: "more info describing location" // string
+  }
+  // json
   email: "email@b.c",
   // string, if provided
-  latitude: 1.234567,
-  // decimal, GPS latitude coord
-  longitude: 1.234567
-  // decimal, GPS longitude coord
+  created_at: "time",
+  // string, set internally
+  updated_at: "time"
+  // string, set internally
 };
 ```
 
@@ -49,8 +51,22 @@ mother = {
   // string, if provided by completing "Caretaker" onboarding
   due_date: "date string",
   // string, format: YYYY-MM-DD
-  hospital: "hospital name"
-  // string, must match location findable by google maps API
+  start: {
+    latlng: "lat,lng", // string, lat and long comma separated, no spaces
+    name: "location name", // string
+    descr: "more info describing location" // string
+  }
+  // json, where mother's ride will begin
+  destination:{
+    latlng: "lat,lng", // string, lat and long comma separated, no spaces
+    name: "location name", // string
+    descr: "more info describing location" // string
+  }
+  // json, where mother's ride will end
+  created_at: "time",
+  // string, set internally
+  updated_at: "time"
+  // string, set internally
 };
 ```
 
@@ -74,6 +90,10 @@ driver = {
   // string, 500 char limit
   photo_url: "http://pic.driver.com"
   // string, 500 char limit
+  created_at: "time",
+  // string, set internally
+  updated_at: "time"
+  // string, set internally
 };
 ```
 
