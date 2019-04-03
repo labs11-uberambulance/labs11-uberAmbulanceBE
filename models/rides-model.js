@@ -27,6 +27,17 @@ async function findDrivers(lat, long){
             }
         }
     })
+    // drivers.forEach(driver => {
+    //     const latlng = driver.location.latlng.split(",");
+    //      const lat = latlng[0];
+    //      const lng = latlng[1];
+    //     if (lng< maxLng && lng > minLng) {
+    //         if (lat < maxLat && lat > minLat) {
+    //             driversInArea.push(driver, latlng)
+    //         }
+    //     }
+    // })
+    
     // console.log(driversInArea)
     //Convert Drivers Locations to URL Format
     var destinations =[]
@@ -45,15 +56,29 @@ async function findDrivers(lat, long){
         }
         
      })
+    // var destinations =[]
+    // driversInArea.forEach((driver, i) =>{
+    //     if(driver.driver.active){
+    //         if(i === driversInArea.length-1){
+    //             const lat = latlng[0];
+    //             const lng = latlng[1];
+    //             destinations.push(`${lat}%2C${lng}&`)
+    //            }
+    //            else{
+    //             const lat = latlng[0];
+    //             const lng = latlng[1];
+    //             destinations.push(`${lat}%2C${lng}%7C`)
+    //         }
+    //     }
+        
+    //  })
      console.log(destinations)
     // Format Google URL with Origin, Destinations and API
    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${long}&destinations=${destinations.join('')}key=${process.env.MYMAPSKEY}`
   // Return Google distance information 
- 
    const results = await axios.get(url).then(res=>res.data).catch(err=>console.log(err))
     // Parse Google Distance information to return distance, and driver.
     console.log(results)
-    
     var nearest = []
     results.rows[0].elements.forEach((driver, i) =>{
       if(i < 5 ){
@@ -71,6 +96,24 @@ async function findDrivers(lat, long){
          }
       }
     })
+
+    // var nearest = []
+    // results.rows[0].elements.forEach((driver, i) =>{
+    //   if(i < 5 ){
+    //       nearest.push({"driver": driversInArea[i], "distance": driver.distance, "duration":driver.duration, "id":i})
+    //   }
+    //   if(i > 5){
+    //      for (var i = 0; i< nearest.length; i++){
+    //             console.log(nearest)
+    //             if(nearest[i].distance.value < driver.distance.value){
+    //             }
+    //             else{
+    //               nearest.splice(i, 1, {"driver": driversInArea[i], "distance": driver.distance, "duration":driver.duration, "id":i})
+    //               break;
+    //          }
+    //      }
+    //   }
+    // })
    return nearest
 }
 
