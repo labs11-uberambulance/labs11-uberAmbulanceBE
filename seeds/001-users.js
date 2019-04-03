@@ -26,49 +26,49 @@ exports.seed = function(knex, Promise) {
   for (let i = 0; i < numFakes; i++) {
     users.push(createFakeUser(i));
   }
-  // // edit first 20 users to have a known firebase id, first 10 mothers, next 10 drivers
-  // for (let i = 0; i < 10; i++) {
-  //   users[i] = {
-  //     ...users[i],
-  //     name: `mother ${i}`,
-  //     firebase_id: `mother${i}FIREBASE`,
-  //     user_type: "mothers"
-  //   };
-  //   users[i + 10] = {
-  //     ...users[i],
-  //     name: `driver ${i}`,
-  //     firebase_id: `driver${i}FIREBASE`,
-  //     user_type: "drivers"
-  //   };
-  // }
-  // edit accounts 1, 2, 3 to have real firebase_ids
-  users[0] = {
-    ...users[0],
+  // edit first 20 users to have a known firebase id, first 10 mothers, next 10 drivers
+  for (let i = 0; i < 10; i++) {
+    users[i] = {
+      ...users[i],
+      name: `mother ${i}`,
+      firebase_id: `mother${i}FIREBASE`,
+      user_type: "mothers"
+    };
+    users[i + 10] = {
+      ...users[i],
+      name: `driver ${i}`,
+      firebase_id: `driver${i}FIREBASE`,
+      user_type: "drivers"
+    };
+  }
+  // edit accounts 21, 22, 23 to have real firebase_ids
+  users[20] = {
+    ...users[20],
     name: "birthride-test-mother",
     firebase_id: "vlW3V1awpQgeaaI22SicEthTxGv1", // belongs to ph: 1111111111
     user_type: "mothers"
   };
-  users[1] = {
-    ...users[1],
+  users[21] = {
+    ...users[21],
     name: "birthride-test-driver",
     firebase_id: "IoOWnaVWc4YY50hTmFpQZZSiDz73", // belongs to ph: 1222222222
     user_type: "drivers"
   };
-  users[2] = {
-    ...users[2],
+  users[22] = {
+    ...users[22],
     name: "birthride-test-user",
     firebase_id: "eBmX5Et0P4TAGHUfPPyUcnsAS963", // belongs to ph: 11958306948
     user_type: ""
   };
-  // // edit 501 & 502 to be users who have not onboarded
-  // users[500] = {
-  //   ...users[500],
-  //   user_type: ""
-  // };
-  // users[501] = {
-  //   ...users[501],
-  //   user_type: ""
-  // };
+  // edit 501 & 502 to be users who have not onboarded
+  users[500] = {
+    ...users[500],
+    user_type: ""
+  };
+  users[501] = {
+    ...users[501],
+    user_type: ""
+  };
 
   return (
     knex("users")

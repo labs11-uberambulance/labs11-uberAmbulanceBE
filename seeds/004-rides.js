@@ -45,7 +45,7 @@ exports.seed = async function(knex, Promise) {
   for (let i = 0; i < numFakes; i++) {
     rides.push(createFakeRide(i));
   }
-  console.log(rides);
+  // console.log(rides);
   // Deletes ALL existing entries
   return knex("rides").then(function() {
     // Inserts seed entries
