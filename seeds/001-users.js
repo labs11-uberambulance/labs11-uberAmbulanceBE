@@ -1,43 +1,24 @@
 const faker = require("faker");
 const towns = require("../data/towns");
+const fakeLatLng = require("../data/fakeLatLng");
 
 exports.seed = function(knex, Promise) {
   function createFakeUser(i) {
     const phone = faker.phone.phoneNumber();
-    const address =
-      Math.random() > 0.2
-        ? faker.address.streetAddress()
-        : faker.lorem.sentences("4");
     const user_type = i % 2 ? "mothers" : "drivers";
+
     return {
       name: faker.name.findName(),
       firebase_id: faker.random.alphaNumeric(8),
       phone,
       user_type,
-      address,
-      village: towns[Math.floor(Math.random() * towns.length)],
+      location: {
+        latlng: fakeLatLng(),
+        name: towns[Math.floor(Math.random() * towns.length)],
+        descr: faker.lorem.sentences("1")
+      },
       // assume drivers have email even if login is with phone
-      email: user_type === "drivers" ? faker.internet.email() : null,
-      // Uganda between -1.4, 4.2, faker doesn't play nice with neg nums
-      // latitude: faker.random.number({ max: 5.6, precision: 0.000001 }) - 1.4,
-      // INSTEAD using boundaries: 0.3, 1.1 (safemothers service area)
-      latitude: faker.random.number({
-        max: 1.1,
-        min: 0.3,
-        precision: 0.000001
-      }),
-      // Uganda between 29.5, 35.5
-      // longitude: faker.random.number({
-      //   min: 29.5,
-      //   max: 35.3,
-      //   precision: 0.000001
-      // })
-      // INSTEAD using boundaries 33.2, 33.9 (safemothers service area)
-      longitude: faker.random.number({
-        min: 33.2,
-        max: 33.9,
-        precision: 0.000001
-      })
+      email: user_type === "drivers" ? faker.internet.email() : null
     };
   }
   const users = [];

@@ -17,10 +17,10 @@ exports.up = function(knex, Promise) {
       .onUpdate("CASCADE");
     tbl.integer("wait_min").unsigned();
     tbl.datetime("request_time");
-    tbl.string("start_village", 500);
-    tbl.json("start_address");
-    tbl.string("destination", 500);
-    tbl.json("destination_address");
+    // start and destination in format:
+    // {latlng: "lat,lng", name: "name", descr: "additional info"}
+    tbl.json("start");
+    tbl.json("destination");
     tbl.string("ride_status");
     tbl.timestamps(true, true);
   });
