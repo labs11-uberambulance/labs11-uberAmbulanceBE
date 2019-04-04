@@ -12,11 +12,9 @@ const db = require('../data/dbConfig');
 
 // /api/drivers/	POST 
 router.post('/drivers', (req, res) => {
-    const lat = req.body.lat;
-   
-    const long = req.body.lng;
-    
-        Rides.findDrivers(lat, long)
+    console.log('#', req.body)
+    const location = req.body.location;
+        Rides.findDrivers(location)
         .then(
             data => {res.status(201).json(data);}
         )
@@ -29,15 +27,13 @@ router.post('/drivers', (req, res) => {
 // Create A New Ride
 router.post('/new-ride', (req, res) => {
     // REGISTERED ROUTE
-    var start_address = JSON.stringify(req.body.start_address);
-    const destination_address = JSON.stringify(req.body.destination_address);
+    var start = JSON.stringify(req.body.start);
+    const destination= JSON.stringify(req.body.destination);
     const request = {
         ...req.body,
-        "start_address": start_address,
-        "destination_address":destination_address
+        start,
+        destination
     }
-
-    console.log("new:", request)
     Rides.createRide(request)
     .then(
         data => {res.status(201).json(data);}
