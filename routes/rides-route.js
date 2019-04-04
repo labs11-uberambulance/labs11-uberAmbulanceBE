@@ -51,10 +51,10 @@ router.get("/", (req, res) => {
       res.status(500).json({ message: "Cannot locate that ride", error });
     });
 });
-// Get a mothers ridesk
+// Get a mothers rides
 router.get("/mother", (req, res) => {
-  const userId = req.body.mother_id;
-  Rides.mothersRides(userId)
+  const id = req.user.user_id; // gives firebase_id
+  Rides.mothersRides(id)
     .then(data => res.status(200).json(data))
     .catch(error => {
       res.status(500).json({ message: "Cannot locate their rides", error });
@@ -62,8 +62,8 @@ router.get("/mother", (req, res) => {
 });
 // Get a drivers rides
 router.get("/driver", (req, res) => {
-  const userId = req.body.driver_id;
-  Rides.mothersRides(userId)
+  const id = req.user.user_id; // gives firebase_id
+  Rides.driversRides(id)
     .then(data => res.status(200).json(data))
     .catch(error => {
       res.status(500).json({ message: "Cannot locate their rides", error });
