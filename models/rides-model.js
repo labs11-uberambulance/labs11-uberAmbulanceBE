@@ -66,6 +66,7 @@ async function findDrivers(location){
 
     var nearest = []
     results.rows[0].elements.forEach((driver, i) =>{
+            console.log(driver)
           nearest.push({"driver": driversInArea[i],  "distance": driver.distance, "duration":driver.duration, "id":i})
       })
    return nearest
