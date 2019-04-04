@@ -27,6 +27,7 @@ async function findDrivers(location){
     const driversInArea = [];
     function loopDrivers(){
     drivers.forEach(driver => {
+        // if(driver.FCM_token){
         if(driver.active){
         const latlng = driver.location.latlng.split(",");
         const lat = Number(latlng[0]);
@@ -39,6 +40,7 @@ async function findDrivers(location){
             }
         }
     }
+// }
     })
     }
     loopDrivers()
