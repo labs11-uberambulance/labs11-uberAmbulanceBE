@@ -27,7 +27,7 @@ server.use(express.json());
 server.use("/api/rides", ridesRoutes);
 server.use("/api/users/", protect, userRoutes);
 server.use("/api/admin/users/", protect, restrict, userRoutesAdmin);
-server.use('/api/notifications', notificationsRoutes);
+server.use('/api/notifications', protect, notificationsRoutes);
 server.use("/api/twilio", protect, twilioRoutes);
 
 // Test routes

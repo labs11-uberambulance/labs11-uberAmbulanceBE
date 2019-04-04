@@ -92,7 +92,7 @@ router.put('/', (req, res) => {
 router.post('/request/driver/:firebase_id', async (req, res, next) => {
     const { firebase_id } = req.params
     const user_id = req.user.uid;
-    const { distance, phone, name, price, eta } = req.body;
+    const { distance, phone, name, price, eta, hospital, } = req.body;
     try {
         const { active, fcm_token } = await db('user').where({ firebase_id }).first();
         if (!active || !fcm_token) {
