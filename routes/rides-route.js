@@ -78,7 +78,7 @@ router.put("/", (req, res) => {
 });
 
 router.post("/request/driver/:firebase_id", async (req, res, next) => {
-  return res.status(404).json({ message: "Still building : )" });
+  // return res.status(404).json({ message: "Still building : )" });
   let { firebase_id } = req.params;
   const mother_id = req.user.uid;
   const { start, end, distance, name, phone, hospital } = req.body;
