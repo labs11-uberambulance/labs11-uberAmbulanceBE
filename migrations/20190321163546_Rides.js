@@ -10,6 +10,7 @@ exports.up = function(knex, Promise) {
       .onUpdate("CASCADE");
     tbl
       .integer("mother_id")
+      .unique()
       .unsigned()
       .notNullable()
       .references("id")
@@ -22,6 +23,7 @@ exports.up = function(knex, Promise) {
     tbl.json("start");
     tbl.json("destination");
     tbl.string("ride_status");
+    tbl.json("rejectedDrivers")
     tbl.timestamps(true, true);
   });
 };
