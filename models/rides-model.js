@@ -1,6 +1,8 @@
 const db = require("../data/dbConfig.js");
 const Users = require('./user-model.js')
 const axios = require('axios');
+const fbAdmin = require('firebase-admin');
+
 require('dotenv').config(); 
 module.exports = {
     findDrivers,
@@ -9,7 +11,9 @@ module.exports = {
     driversRides,
     update,
     createRide,
-    findLocale
+    findLocale,
+    rejectionHandler,
+    notifyDriver
 };
 
 async function findDrivers(location){
@@ -96,3 +100,68 @@ async function findLocale(village){
     const results = await axios.get(url).then(res=>res.data).catch(err=>console.log(err))
     return results
 }
+
+
+// LOGIC TO BOOK A DRIVER AND FIND NEW DRIVER IF REQUEST REJECTED OR TIMER RUNS OUT
+
+async function rejectionHandler (info) {
+    const { ride_status, driver_id, start, rejected_drivers } = (await findRide(info.ride_id))[0];
+    if ( ride_status !== 'waiting_for_driver' && driver_id !== info.requested_driver ) return;
+    const updatedRejects = !!rejected_drivers ? [...rejected_drivers.rejects, info.requested_driver] : [info.requested_driver];
+    const rejectsJSON = JSON.stringify({ rejects: updatedRejects })
+    console.log('rejected array: ', updatedRejects)
+    try {
+        const drivers = await db('drivers').where({ active: true });
+            // const drivers = await findDrivers(start);
+        const newDriver = drivers.filter(driver => {
+        if (driver.price < info.price + 3 && !updatedRejects.includes(driver.firebase_id)) return true// add check for FCM_token when we deploy
+            return false
+        })[0];
+        await db('rides').where({ id: info.ride_id }).update({ driver_id: newDriver.firebase_id, rejected_drivers: rejectsJSON })
+        let rideInfo = { ...info, requested_driver: newDriver.firebase_id }
+        notifyDriver(null , rideInfo);
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+async function initDriverLoop(info){
+    setTimeout( async () => {
+        const { ride_status, driver_id } = (await findRide(info.ride_id))[0];
+        if (ride_status === 'waiting_on_driver' && driver_id === info.requested_driver) {
+            console.log('driver that rejected: ', driver_id)
+            rejectionHandler(info);
+        }
+    }, 10000)
+}
+
+function notifyDriver(FCM_token, rideInfo) {
+    const messaging = fbAdmin.messaging();
+    const message = { 
+        notification: {
+            title: `You have a new ride request! (${rideInfo.distance}km) `,
+            body: `${rideInfo.name} needs to be taken to ${rideInfo.hospital}, -price: ${rideInfo.price}USh`
+        },
+        data: { distance: rideInfo.distance, name: rideInfo.name, phone: rideInfo.phone, price: rideInfo.price, ride_id: rideInfo.ride_id }
+    }
+    console.log('waiting on driver: ', rideInfo.requested_driver)
+    initDriverLoop(rideInfo)
+                // const message = { 
+            //     notification: {
+            //         title: `You have a new ride request! (${distance}km) `,
+            //         body: `${name} needs to be taken to ${hospital}, -price: ${rate}USh`
+            //     },
+            //     data: { distance, name, phone, rate, ride_id: id, hospital }
+            // }
+    // messaging.sendToDevice(FCM_token, message).then(response => {
+    //     // SET TIMER FUNCTION TO WAIT FOR RESPONSE OR MOVE ON.
+    //     if (response.successCount !== 0) {
+    //         initDriverLoop(firebase_id, ride_id)
+    //     }
+    //     return
+    //  }).catch(err => {
+    //     console.log('Error sending message:', err);
+    //     // We should take over again, and search for another driver (Stretch).
+    //  })
+}
+
