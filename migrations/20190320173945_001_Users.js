@@ -10,6 +10,7 @@ exports.up = function(knex, Promise) {
     tbl.enum("user_type", ["mothers", "drivers", ""]);
     tbl.json("location"); // {latlng: "lat,lng", name: "name", descr: "additional info"}
     tbl.string("email");
+    tbl.string("FCM_token");
     tbl.timestamps(true, true);
   });
 };
