@@ -86,48 +86,39 @@ router.put('/', (req, res) => {
 });
 
 router.post('/request/driver/:firebase_id', async (req, res, next) => {
-    const { firebase_id } = req.params
+    return res.status(404).json({ message: 'Still building : )' })
+    let { firebase_id } = req.params
     const mother_id = req.user.uid;
-    const { start, end } = req.body;
+    const { start, end, distance, name, phone, hospital } = req.body;
     try {
         // // proper
         // const user = await db('users as u').where({'u.firebase_id': firebase_id })
         //             .join('drivers as d', 'u.firebase_id', 'd.firebase_id').first()
         // improper
         const { FCM_token } = await db('users').where({ firebase_id }).first();
-        const price = '2';
         const active = true;
-        const name = 'Lauren';
-        const distance = '5';
-        const phone = '+11111111111'
-
         if (!active || !FCM_token) {
             // should take over and search for another driver
         } else {
             // SHOULD CREATE A NEW RIDE AT THIS POINT, BEFORE MESSAGING
-            // const [id] = await db('rides').insert({ driver_id: firebase_id, mother_id, start, destination: end, ride_status: 'waiting_on_driver' })
-            // const ride = await db('rides').where({ id }).first();
-            const messaging = fbAdmin.messaging();
-            const message = { 
-                notification: {
-                    title: "You have a new ride request!",
-                    body: ` ${name} is ${distance}km , -price: ${price}USh`
-                },
-                data: { distance, name, phone, price, ride_id: '1' }
-            }
+            const { firebase_id, price } = (await db('drivers'))[0];
+            const rate = `${price}`;
+            const [id] = await db('rides').insert({ driver_id: firebase_id, mother_id, start, destination: end, ride_status: 'waiting_on_driver', }, "id")
+            const rideInfo = { distance, name, phone, hospital, ride_id: id, requested_driver: firebase_id, price }
+            Rides.notifyDriver(null, rideInfo);
             // move out of set timeout when we are deployed.
-            setTimeout(() => {
-                messaging.sendToDevice(FCM_token, message).then(response => {
-                //   // **** DO NOT UNCOMMENT ****
-                //    if (response.successCount !== 0) {
-                //        Rides.initDriverLoop(firebase_id)
-                //    }
-                   return
-                }).catch(err => {
-                   console.log('Error sending message:', err);
-                   // We should take over again, and search for another driver (Stretch).
-                })
-            }, 5000)
+            // setTimeout(() => {
+            //     messaging.sendToDevice(FCM_token, message).then(response => {
+            //     //   // **** DO NOT UNCOMMENT ****
+            //     //    if (response.successCount !== 0) {
+            //     //        Rides.initDriverLoop(firebase_id)
+            //     //    }
+            //        return
+            //     }).catch(err => {
+            //        console.log('Error sending message:', err);
+            //        // We should take over again, and search for another driver (Stretch).
+            //     })
+            // }, 5000)
 
         }
     } catch (err) {
