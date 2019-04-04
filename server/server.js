@@ -19,7 +19,7 @@ server.use(cors());
 server.use(express.json());
 
 // Configure Routes
-server.use("/api/rides", ridesRoutes);
+server.use("/api/rides", protect, ridesRoutes);
 server.use("/api/users/", protect, userRoutes);
 server.use("/api/admin/users/", protect, restrict, userRoutesAdmin);
 server.use("/api/twilio", twilioRoutes);
@@ -29,6 +29,5 @@ server.get("/", async (req, res) => {
   res.status(200).json("Hey there BirthRide Dev!");
 });
 server.use("/api/test-auth", protect, testAuthRoute);
-
 
 module.exports = server;
