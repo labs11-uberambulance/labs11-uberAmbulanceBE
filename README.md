@@ -106,25 +106,43 @@ returned by request to /api/drivers
 ```js
 drivers = [
   {
+  driver: {
+    // Traditional Driver Object, with all their info.
     id: 1,
-    // int, unique, set internally
-    latitude: 1.234567,
-    // decimal, GPS latitude coord
-    longitude: 1.234567,
-    // decimal, GPS longitude coord
-    email: "email@b.c",
-    // string, if provided
-    price: 345,
-    // int, maximum price for ride
-    active: false,
-    // bool, driver status (accepting rides?)
-    bio: "bio here"
-    // string, 500 char limit
-  },
+    name: "Layne Terry",
+    firebase_id: "0j9bat5h",
+    phone: "760.509.2082 x2045",
+    user_type: "drivers",
+    location: {
+      "latlng": "0.598206,33.24884",
+      "name": "Kibuku",
+      "descr": "Eius beatae nihil."
+    },
+    email: "Gudrun52@gmail.com",
+    created_at: "2019-04-03T21:46:48.986Z",
+    updated_at: "2019-04-03T21:46:48.986Z",
+    price: 338,
+    active: true,
+    bio: "Nobis non quia laudantium iure eos. Rem veritatis consequatur sapiente in. Est velit aut tenetur qui incidunt eius ipsum hic. Enim ipsa voluptas consequatur eum unde enim ad.",
+    photo_url: "http://lorempixel.com/640/480/people"
+    },
+  distance: {
+  // Returned from google represents the distance that driver is from our user. 
+        text: "99.4 km",
+        value: 99357 
+    },
+  duration: {
+  // Returned from google represents the time it would take our driver to get to our user.
+        text: "2 hours 26 mins",
+        value: 8786 (seconds)
+    },
+     id: 4
+    },
   {
     // driver 2
   }
   // etc.
+}
 ];
 ```
 
@@ -216,7 +234,8 @@ Authorization: "eyJhbG...";
 
 | Method    | URL                 | Description                                                                                                                                                                                                      |
 | --------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| TODO-POST | /api/drivers        | Include `{ latitude: 1.234, longitude: 1.234 }` in request body. Returns [nearest driver data](###Nearest-driver-data) (ref. data schema above), sorted by nearest first.                                        |
+| TODO-POST | /api/rides/drivers        | Include `{ location: 'lat,lng' }` in request body. Returns [nearest driver data](###Nearest-driver-data) (ref. data schema above), returns an array of the nearest active drivers with a minimum of 5.                                        |
+| TODO-POST | /request/driver/:firebase_id  | The firebase_id should belong to the driver the mother selected. Include `{ end, start, hospital, name, phone }` in request body. _end='lat,lng' of hospital_, _start='lat,lng' of mother's location_, _hospital=name of hospital_, _name=name of mother_, _phone=phone number of mother_. Returns nothing. Will begin Twilio actions on the backend, mother and driver will be updated that way.                                       |
 | TODO-POST | /api/rides/new-ride | Include data as found in [new ride data](###New-ride-data) in request body. Creates a new ride and sends request to driver.                                                                                      |
 | TODO-GET  | /api/rides/         | Include `{ rideId: id }` in request body. Returns [complete ride data](###complete-ride-data).                                                                                                                   |
 | TODO-GET  | /api/rides/         | Include `{ userId: id }` in request body. Returns **`array`** of [complete ride data](###complete-ride-data) matching `userId`.                                                                                  |
