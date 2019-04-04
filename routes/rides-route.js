@@ -78,7 +78,7 @@ router.put("/", (req, res) => {
 });
 
 router.post("/request/driver/:firebase_id", async (req, res, next) => {
-  // return res.status(404).json({ message: "Still building : )" });
+  return res.status(404).json({ message: "Still building : )" });
   let { firebase_id } = req.params;
   const mother_id = req.user.uid;
   const { start, end, distance, name, phone, hospital } = req.body;
@@ -137,7 +137,7 @@ router.get("/driver/accepts/:ride_id", async (req, res, next) => {
     //     .join('mothers as m', 'r.mother_id', 'm.firebase_id')
     //     .join('drivers as d', 'r.driver_id', 'd.firebase_id')
     //     .select('m.name as mother', 'd.name as driver', 'm.phone as to', 'r.eta', 'r.price as price')
-    const to = "";
+    const to = "+";
     const mother = "Lauren";
     const driver = "James";
     const price = 2;
