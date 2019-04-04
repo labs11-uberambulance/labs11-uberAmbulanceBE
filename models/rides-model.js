@@ -12,12 +12,9 @@ module.exports = {
     findLocale
 };
 
-
 async function findDrivers(location){
     const latlng = location.split(",");
-    
     const lat = Number(latlng[0]);
-  
     const lng = Number(latlng[1]);
  
     // Setting initial range 
@@ -46,7 +43,6 @@ async function findDrivers(location){
     }
     loopDrivers()
         do{
-            // console.log('MATTYY!@$!#!@')
             maxLat += .066
             maxLng += .066
             minLat -= .066
@@ -54,7 +50,7 @@ async function findDrivers(location){
             loopDrivers()
         }while(driversInArea.length<=5)    
     console.log(driversInArea.length)
-    //Convert Drivers Locations to URL Format
+//Convert Drivers Locations to URL Format
     var destinations =[]
     driversInArea.forEach((driver, i) =>{
             const latlng = driver.location.latlng.split(",");
@@ -62,32 +58,16 @@ async function findDrivers(location){
             const lng = Number(latlng[1]);
             destinations.push(`${lat}%2C${lng}%7C`)
      })
-    //  console.log(destinations)
-     console.log(destinations.join(''))
-//     // Format Google URL with Origin, Destinations and API
+// Format Google URL with Origin, Destinations and API
    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${lng}&destinations=${destinations.join('')}&key=${process.env.MYMAPSKEY}`
-// //   // Return Google distance information 
+// Return Google distance information 
    const results = await axios.get(url).then(res=>res.data).catch(err=>console.log(err))
-//     //  console.log(results)
-    // return (results)
-//     // Parse Google Distance information to return distance, and driver.
+// Parse Google Distance information to return distance, and driver.
 
     var nearest = []
     results.rows[0].elements.forEach((driver, i) =>{
           nearest.push({"driver": driversInArea[i],  "distance": driver.distance, "duration":driver.duration, "id":i})
       })
-    //   if(i > 5){
-    //      for (var i = 0; i< nearest.length; i++){
-    //             console.log(nearest)
-    //             if(nearest[i].distance.value < driver.distance.value){
-    //             }
-    //             else{
-    //               nearest.splice(i, 1, {"driver": driversInArea[i], "distance": driver.distance, "duration":driver.duration, "id":i})
-    //               break;
-    //          }
-    //      }
-    //   }
-    // })
    return nearest
 }
 
