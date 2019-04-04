@@ -183,30 +183,26 @@ function notifyDriver(FCM_token, rideInfo) {
       }, -price: ${rideInfo.price}USh`
     },
     data: {
-      distance: rideInfo.distance,
+      distance: `${rideInfo.distance}`,
       name: rideInfo.name,
       phone: rideInfo.phone,
-      price: rideInfo.price,
-      ride_id: rideInfo.ride_id
+      price: `${rideInfo.price}`,
+      ride_id: `${rideInfo.ride_id}`
     }
   };
   console.log("waiting on driver: ", rideInfo.requested_driver);
-  initDriverLoop(rideInfo);
-  // const message = {
-  //     notification: {
-  //         title: `You have a new ride request! (${distance}km) `,
-  //         body: `${name} needs to be taken to ${hospital}, -price: ${rate}USh`
-  //     },
-  //     data: { distance, name, phone, rate, ride_id: id, hospital }
-  // }
-  // messaging.sendToDevice(FCM_token, message).then(response => {
-  //     // SET TIMER FUNCTION TO WAIT FOR RESPONSE OR MOVE ON.
-  //     if (response.successCount !== 0) {
-  //         initDriverLoop(firebase_id, ride_id)
-  //     }
-  //     return
-  //  }).catch(err => {
-  //     console.log('Error sending message:', err);
-  //     // We should take over again, and search for another driver (Stretch).
-  //  })
+  // initDriverLoop(rideInfo);
+  messaging
+    .sendToDevice(FCM_token, message)
+    .then(response => {
+      // SET TIMER FUNCTION TO WAIT FOR RESPONSE OR MOVE ON.
+      // if (response.successCount !== 0) {
+      //   initDriverLoop(firebase_id, ride_id);
+      // }
+      return;
+    })
+    .catch(err => {
+      console.log("Error sending message:", err);
+      // We should take over again, and search for another driver (Stretch).
+    });
 }

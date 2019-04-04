@@ -95,7 +95,9 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
       // should take over and search for another driver
     } else {
       // SHOULD CREATE A NEW RIDE AT THIS POINT, BEFORE MESSAGING
-      const { firebase_id, price } = (await db("drivers"))[0];
+      const { price } = await db("drivers")
+        .where({ firebase_id })
+        .first();
       const rate = `${price}`;
       const [id] = await db("rides").insert(
         {
@@ -116,20 +118,9 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
         requested_driver: firebase_id,
         price
       };
-      Rides.notifyDriver(null, rideInfo);
-      // move out of set timeout when we are deployed.
-      // setTimeout(() => {
-      //     messaging.sendToDevice(FCM_token, message).then(response => {
-      //     //   // **** DO NOT UNCOMMENT ****
-      //     //    if (response.successCount !== 0) {
-      //     //        Rides.initDriverLoop(firebase_id)
-      //     //    }
-      //        return
-      //     }).catch(err => {
-      //        console.log('Error sending message:', err);
-      //        // We should take over again, and search for another driver (Stretch).
-      //     })
-      // }, 5000)
+      setTimeout(() => {
+        Rides.notifyDriver(FCM_token, rideInfo);
+      }, 3000);
     }
   } catch (err) {
     console.log(err);
@@ -146,7 +137,7 @@ router.get("/driver/accepts/:ride_id", async (req, res, next) => {
     //     .join('mothers as m', 'r.mother_id', 'm.firebase_id')
     //     .join('drivers as d', 'r.driver_id', 'd.firebase_id')
     //     .select('m.name as mother', 'd.name as driver', 'm.phone as to', 'r.eta', 'r.price as price')
-    const to = "+13476812414";
+    const to = "";
     const mother = "Lauren";
     const driver = "James";
     const price = 2;
