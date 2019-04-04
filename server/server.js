@@ -36,5 +36,4 @@ server.get("/", async (req, res) => {
 });
 server.use("/api/test-auth", protect, testAuthRoute);
 
-
 module.exports = server;
