@@ -4,6 +4,7 @@ exports.up = function(knex, Promise) {
     tbl
       .string("firebase_id")
       .unsigned()
+      .unique()
       .notNullable()
       .references("firebase_id")
       .inTable("users")

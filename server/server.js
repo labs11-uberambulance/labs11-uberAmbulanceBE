@@ -2,6 +2,10 @@ const express = require("express");
 const server = express();
 const cors = require("cors");
 const helmet = require("helmet");
+
+// GLOBAL SERVICES
+require('../services/firebase-admin');
+
 // custom mw's:
 const protect = require("../auth/auth-mw").protect; // requires valid firebase token
 const restrict = require("../auth/auth-mw").restrict; // requires firebase user to match ADMIN_FIREBASE in .env
@@ -11,6 +15,7 @@ const ridesRoutes = require("../routes/rides-route.js");
 const userRoutes = require("../routes/users-routes.js");
 const userRoutesAdmin = require("../routes/users-routes-admin.js");
 const testAuthRoute = require("../auth/test-auth-route");
+const notificationsRoutes = require('../routes/notifications');
 const twilioRoutes = require("../routes/twilio");
 
 // configure middlewares
@@ -22,7 +27,8 @@ server.use(express.json());
 server.use("/api/rides", protect, ridesRoutes);
 server.use("/api/users/", protect, userRoutes);
 server.use("/api/admin/users/", protect, restrict, userRoutesAdmin);
-server.use("/api/twilio", twilioRoutes);
+server.use('/api/notifications', protect, notificationsRoutes);
+server.use("/api/twilio", protect, twilioRoutes);
 
 // Test routes
 server.get("/", async (req, res) => {
