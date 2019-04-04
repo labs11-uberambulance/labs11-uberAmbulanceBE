@@ -10,7 +10,10 @@ exports.up = function(knex, Promise) {
       .onUpdate("CASCADE");
     tbl.string("caretaker_name", 500);
     tbl.date("due_date");
-    tbl.string("hospital", 500);
+    // start and destination in format:
+    // {latlng: "lat,lng", name: "name", descr: "additional info"}
+    tbl.json("start");
+    tbl.json("destination");
     tbl.timestamps(true, true);
   });
 };
