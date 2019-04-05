@@ -144,7 +144,7 @@ router.get("/driver/accepts/:ride_id", async (req, res, next) => {
     const eta = 15;
     await twilio.messages.create({
       from: "+19179709371",
-      to: "+13476812414",
+      to: "+15058503318",
       body: `${mother}, ${driver} is on their way, the total price will be ${price}USh. Estimated time: ${eta}mins.`
     });
     return res.sendStatus(200);
