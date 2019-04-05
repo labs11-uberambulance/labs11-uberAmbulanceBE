@@ -69,7 +69,6 @@ exports.seed = function(knex, Promise) {
     ...users[501],
     user_type: ""
   };
-
   return (
     knex("users")
       // Delete existing entries handled in 000-cleaner.js

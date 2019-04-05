@@ -3,12 +3,12 @@ const Users = require("../models/user-model");
 
 exports.seed = async function(knex, Promise) {
   const mothers = (await Users.findMothers()).map(user => {
-    const { id, start, destination } = user;
-    return { id, start, destination };
+    const { firebase_id, start, destination } = user;
+    return { firebase_id, start, destination };
   });
   const drivers = (await Users.findDrivers()).map(user => {
-    const { id, location } = user;
-    return { id, location };
+    const { firebase_id, location } = user;
+    return { firebase_id, location };
   });
   function createFakeRide(i) {
     const wait_min = faker.random.number({
@@ -21,8 +21,8 @@ exports.seed = async function(knex, Promise) {
     const randomDriverIndex = faker.random.number({ max: maxDriver, min: 0 });
     const mother = mothers[randomMomIndex];
     const driver = drivers[randomDriverIndex];
-    const mother_id = mother.id;
-    const driver_id = driver.id;
+    const mother_id = mother.firebase_id;
+    const driver_id = driver.firebase_id;
     const start = {
       ...mother.start
     };
@@ -30,10 +30,10 @@ exports.seed = async function(knex, Promise) {
       ...mother.destination
     };
     return {
-      request_time: faker.date.past(),
+      // request_time: faker.date.past(),
       driver_id,
       mother_id,
-      wait_min,
+      // wait_min,
       start,
       destination,
       ride_status: Math.random() > 0.3 ? "In Progress" : "Completed"
@@ -49,6 +49,6 @@ exports.seed = async function(knex, Promise) {
   // Deletes ALL existing entries
   return knex("rides").then(function() {
     // Inserts seed entries
-    return knex("rides").insert(rides);
+    return knex("rides").insert([]);
   });
 };
