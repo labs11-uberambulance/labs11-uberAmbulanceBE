@@ -90,6 +90,7 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
     const { FCM_token } = await db("users")
       .where({ firebase_id })
       .first();
+      console.log(FCM_token)
     const active = true;
     if (!active || !FCM_token) {
       // should take over and search for another driver
@@ -110,6 +111,7 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
         "id"
       );
       const rideInfo = {
+        counter: 0,
         distance,
         name,
         phone,
@@ -154,6 +156,15 @@ router.get("/driver/accepts/:ride_id", async (req, res, next) => {
 });
 
 router.get("/driver/rejects/:ride_id", async (req, res, next) => {
+  const { ride_id } = req.params;
+  const driver_id = req.user.uid;
+  try {
+    await Rides.rejectionHandler(ride_id, driver_id);
+  } catch (err) {
+    console.log(err);
+  }
+});
+router.post("/driver/rejects/:ride_id", async (req, res, next) => {
   const { ride_id } = req.params;
   const driver_id = req.user.uid;
   try {

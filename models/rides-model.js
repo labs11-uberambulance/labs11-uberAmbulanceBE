@@ -137,11 +137,12 @@ async function rejectionHandler(info) {
   const rejectsJSON = JSON.stringify({ rejects: updatedRejects });
   console.log("rejected array: ", updatedRejects);
   try {
-    const drivers = await db("drivers").where({ active: true });
+    const drivers = await findDrivers(start)
     // const drivers = await findDrivers(start);
     const newDriver = drivers.filter(driver => {
       if (
-        driver.price < info.price + 3 &&
+        //Driver price should never change always first driver's price.
+        driver.price < info.price + 3 &&           
         !updatedRejects.includes(driver.firebase_id)
       )
         return true; // add check for FCM_token when we deploy
@@ -154,7 +155,12 @@ async function rejectionHandler(info) {
         rejected_drivers: rejectsJSON
       });
     let rideInfo = { ...info, requested_driver: newDriver.firebase_id };
-    notifyDriver(null, rideInfo);
+    if(count > 10){
+      break
+    } else{
+      notifyDriver(newDriver.FCM_token, rideInfo);
+    }
+    // Count Meter if >10 break 
   } catch (err) {
     console.log(err);
   }
@@ -196,9 +202,9 @@ function notifyDriver(FCM_token, rideInfo) {
     .sendToDevice(FCM_token, message)
     .then(response => {
       // SET TIMER FUNCTION TO WAIT FOR RESPONSE OR MOVE ON.
-      // if (response.successCount !== 0) {
-      //   initDriverLoop(firebase_id, ride_id);
-      // }
+      if (response.successCount !== 0) {
+        initDriverLoop(firebase_id, ride_id);
+      }
       return;
     })
     .catch(err => {
