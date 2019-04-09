@@ -32,7 +32,6 @@ async function findDrivers(location) {
   function loopDrivers() {
     drivers.forEach(driver => {
       if (driver.active && driver.FCM_token) {
-        console.log(driver)
         const latlng = driver.location.latlng.split(",");
         const lat = Number(latlng[0]);
         const lng = Number(latlng[1]);
@@ -54,17 +53,15 @@ async function findDrivers(location) {
     minLng -= 0.066;
     loopDrivers();
   } while (driversInArea.length < 1);
-  console.log(driversInArea.length);
   //Convert Drivers Locations to URL Format
   var destinations = [];
   driversInArea.forEach((driver, i) => {
-    console.log("driver in area: ", driver);
+    // console.log("driver in area: ", driver);
     const latlng = driver.location.latlng.split(",");
     const lat = Number(latlng[0]);
     const lng = Number(latlng[1]);
     destinations.push(`${lat}%2C${lng}%7C`);
   });
-  console.log(destinations)
   // Format Google URL with Origin, Destinations and API
   const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${lng}&destinations=${destinations.join(
     ""
@@ -76,10 +73,8 @@ async function findDrivers(location) {
     .then(res => res.data)
     .catch(err => console.log(err));
   // Parse Google Distance information to return distance, and driver.
-  console.log(results)
   var nearest = [];
   results.rows[0].elements.forEach((driver, i) => {
-    console.log(driver)
     nearest.push({
       driver: driversInArea[i],
       distance: driver.distance,
@@ -115,7 +110,7 @@ async function update(id, changes) {
 
 async function findLocale(village) {
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${village}&region=ug&components=country:UG&key=${
-    process.env.MYMAPSKEY
+    process.env.GOOGLE_MAPS_KEY
   }`;
   const results = await axios
     .get(url)
@@ -127,7 +122,6 @@ async function findLocale(village) {
 // LOGIC TO BOOK A DRIVER AND FIND NEW DRIVER IF REQUEST REJECTED OR TIMER RUNS OUT
 
 async function rejectionHandler(info) {
-  console.log("INFO",info)
   const { ride_status, driver_id, start, rejected_drivers } = (await findRide(
     info.ride_id
   ))[0];
@@ -146,19 +140,20 @@ async function rejectionHandler(info) {
     return
   }
   try {
-    const drivers = await findDrivers(start)
-    const newDriver = drivers.filter(driver => {
-      // if (
-      //   //Driver price should never change always first driver's price, 
-      //   driver.price < info.price + 3 &&           
-      //   !updatedRejects.includes(driver.firebase_id)
-      // // )
-      //   return true; // add check for FCM_token when we deploy
-      return true;
-    })[1];
-    console.log('NEWDRIVER', newDriver)
+    const drivers = await findDrivers(start);
+    let newDriver = drivers.filter(driver => {
+      if (
+        //Driver price should never change always first driver's price, 
+        driver.driver.price < info.price + 3 &&           
+        !updatedRejects.includes(driver.driver.firebase_id)
+      )
+        return true; // add check for FCM_token when we deploy
+      return false;
+    })[0];
     if(!newDriver){
       return
+    } else {
+      newDriver = newDriver.driver
     }
     await db("rides")
       .where({ id: info.ride_id })
@@ -176,11 +171,14 @@ async function rejectionHandler(info) {
 async function initDriverLoop(info) {
   setTimeout(async () => {
     const { ride_status, driver_id } = (await findRide(info.ride_id))[0];
+    console.log('STATUS: ', ride_status);
+    console.log('driver in ride object: ', driver_id);
+    console.log('driver that called timeout: ', info.requested_driver);
     if (
       ride_status === "waiting_on_driver" &&
       driver_id === info.requested_driver
     ) {
-      console.log("driver that rejected: ", driver_id);
+      // console.log("driver that rejected: ", driver_id);
       rejectionHandler(info);
     }
   }, 5000);
@@ -205,7 +203,6 @@ function notifyDriver(FCM_token, rideInfo) {
     }
   };
   console.log("waiting on driver: ", rideInfo.requested_driver);
-  // initDriverLoop(rideInfo);
   messaging
     .sendToDevice(FCM_token, message)
     .then(response => {
