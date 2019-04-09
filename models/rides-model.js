@@ -12,6 +12,7 @@ module.exports = {
   update,
   createRide,
   findLocale,
+  reverseGeocodeLatLng,
   rejectionHandler,
   notifyDriver
 };
@@ -66,7 +67,7 @@ async function findDrivers(location) {
   const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${lng}&destinations=${destinations.join(
     ""
   )}&key=${process.env.GOOGLE_MAPS_KEY}`;
- 
+
   // // Return Google distance information
   const results = await axios
     .get(url)
@@ -119,6 +120,18 @@ async function findLocale(village) {
   return results;
 }
 
+async function reverseGeocodeLatLng(latlng) {
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latlng}&key=${
+    process.env.GOOGLE_MAPS_KEY
+  }`;
+  const result = await axios
+    .get(url)
+    .then(res => res.data)
+    .catch(err => console.log(err));
+  // console.log("revGeocode: ", result);
+  return result;
+}
+
 // LOGIC TO BOOK A DRIVER AND FIND NEW DRIVER IF REQUEST REJECTED OR TIMER RUNS OUT
 
 async function rejectionHandler(info) {
@@ -136,24 +149,24 @@ async function rejectionHandler(info) {
   const rejectsJSON = JSON.stringify({ rejects: updatedRejects });
   console.log("rejected array: ", updatedRejects);
   // counter added to never exceed 5 rejections.
-  if(updatedRejects.length > 5){
-    return
+  if (updatedRejects.length > 5) {
+    return;
   }
   try {
     const drivers = await findDrivers(start);
     let newDriver = drivers.filter(driver => {
       if (
-        //Driver price should never change always first driver's price, 
-        driver.driver.price < info.price + 3 &&           
+        //Driver price should never change always first driver's price,
+        driver.driver.price < info.price + 3 &&
         !updatedRejects.includes(driver.driver.firebase_id)
       )
         return true; // add check for FCM_token when we deploy
       return false;
     })[0];
-    if(!newDriver){
-      return
+    if (!newDriver) {
+      return;
     } else {
-      newDriver = newDriver.driver
+      newDriver = newDriver.driver;
     }
     await db("rides")
       .where({ id: info.ride_id })
@@ -171,9 +184,9 @@ async function rejectionHandler(info) {
 async function initDriverLoop(info) {
   setTimeout(async () => {
     const { ride_status, driver_id } = (await findRide(info.ride_id))[0];
-    console.log('STATUS: ', ride_status);
-    console.log('driver in ride object: ', driver_id);
-    console.log('driver that called timeout: ', info.requested_driver);
+    console.log("STATUS: ", ride_status);
+    console.log("driver in ride object: ", driver_id);
+    console.log("driver that called timeout: ", info.requested_driver);
     if (
       ride_status === "waiting_on_driver" &&
       driver_id === info.requested_driver
@@ -198,7 +211,7 @@ function notifyDriver(FCM_token, rideInfo) {
       name: rideInfo.name,
       phone: rideInfo.phone,
       price: `${rideInfo.price}`,
-      ride_id: `${rideInfo.ride_id}`, 
+      ride_id: `${rideInfo.ride_id}`,
       hospital: `${rideInfo.hospital}`
     }
   };

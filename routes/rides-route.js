@@ -5,7 +5,7 @@
 
 const router = require("express").Router();
 const Rides = require("../models/rides-model.js");
-const Users = require('../models/user-model');
+const Users = require("../models/user-model");
 const fbAdmin = require("firebase-admin");
 const twilio = require("../services/twilio");
 const db = require("../data/dbConfig");
@@ -65,7 +65,28 @@ router.get("/mother", (req, res) => {
 router.get("/driver", (req, res) => {
   const id = req.user.user_id; // gives firebase_id
   Rides.driversRides(id)
-    .then(data => res.status(200).json(data))
+    .then(data => {
+      return data.filter((ride, i) => i < 6);
+    })
+    .then(async data => {
+      try {
+        let rides = await data.map(async ride => {
+          try {
+            const destName = await Rides.reverseGeocodeLatLng(ride.destination);
+            console.log("ABOVE: ", destName.results[0]);
+            console.log("HERE: ", { ...ride, destName });
+            return { ...ride, destName };
+          } catch (error) {
+            console.log("Error reverse geocoding driver ride");
+          }
+        });
+        rides = await Promise.all(rides);
+        console.log("GET /rides/driver : ", rides);
+        res.status(200).json(rides);
+      } catch (error) {
+        console.log(error);
+      }
+    })
     .catch(error => {
       res.status(500).json({ message: "Cannot locate their rides", error });
     });
@@ -85,34 +106,37 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
   const { start, end, distance, name, phone, hospital } = req.body;
   try {
     // // proper
-    const {active, FCM_token, price} = await db('users as u').where({'u.firebase_id': firebase_id })
-                .join('drivers as d', 'u.firebase_id', 'd.firebase_id').first()
-      // SHOULD CREATE A NEW RIDE AT THIS POINT, BEFORE MESSAGING
-      const [id] = await db("rides").insert(
-        {
-          driver_id: firebase_id,
-          mother_id,
-          start,
-          destination: end,
-          ride_status: "waiting_on_driver"
-        },
-        "id"
-      );
-      const rideInfo = {
-        distance,
-        name,
-        phone,
-        hospital,
-        ride_id: id,
-        requested_driver: firebase_id,
-        price
-      };
-      setTimeout(() => {
-        Rides.notifyDriver(FCM_token, rideInfo);
-        res.status(200).json({ message: "Contacting driver, we will update you soon." })
-      }, 5000);
-    }
- catch (err) {
+    const { active, FCM_token, price } = await db("users as u")
+      .where({ "u.firebase_id": firebase_id })
+      .join("drivers as d", "u.firebase_id", "d.firebase_id")
+      .first();
+    // SHOULD CREATE A NEW RIDE AT THIS POINT, BEFORE MESSAGING
+    const [id] = await db("rides").insert(
+      {
+        driver_id: firebase_id,
+        mother_id,
+        start,
+        destination: end,
+        ride_status: "waiting_on_driver"
+      },
+      "id"
+    );
+    const rideInfo = {
+      distance,
+      name,
+      phone,
+      hospital,
+      ride_id: id,
+      requested_driver: firebase_id,
+      price
+    };
+    setTimeout(() => {
+      Rides.notifyDriver(FCM_token, rideInfo);
+      res
+        .status(200)
+        .json({ message: "Contacting driver, we will update you soon." });
+    }, 5000);
+  } catch (err) {
     console.log(err);
   }
 });
@@ -121,14 +145,17 @@ router.get("/driver/accepts/:ride_id", async (req, res, next) => {
   const { ride_id: id } = req.params;
   try {
     // // Move on with filling in rest of rides object.
-    await db('rides').where({ id }).update({ ride_status: 'Driver en route' })
+    await db("rides")
+      .where({ id })
+      .update({ ride_status: "Driver en route" });
     // // Twillio takes over
-    const ride = await db('rides').where({id})
+    const ride = await db("rides").where({ id });
 
-    const mother = (await Users.findBy({'firebase_id':ride[0].mother_id}))[0]
-    const driver = (await Users.findBy({'firebase_id':ride[0].driver_id}))[0]
-    const {price} = (await Users.findDriversBy({'firebase_id':driver.firebase_id}))[0]
-    
+    const mother = (await Users.findBy({ firebase_id: ride[0].mother_id }))[0];
+    const driver = (await Users.findBy({ firebase_id: ride[0].driver_id }))[0];
+    const { price } = (await Users.findDriversBy({
+      firebase_id: driver.firebase_id
+    }))[0];
 
     // const {mother, driver, eta, to } = await db('rides as r').where({ 'r.id': id })
     //     .join('users as m', 'r.mother_id', 'm.firebase_id')
@@ -143,7 +170,9 @@ router.get("/driver/accepts/:ride_id", async (req, res, next) => {
     await twilio.messages.create({
       from: "+19179709371",
       to: `${mother.phone}`,
-      body: `${mother.name}, ${driver.name} is on their way, the total price will be ${price}USh.`
+      body: `${mother.name}, ${
+        driver.name
+      } is on their way, the total price will be ${price}USh.`
     });
     return res.sendStatus(200);
   } catch (err) {
@@ -155,16 +184,14 @@ router.post("/driver/rejects/:ride_id", async (req, res, next) => {
   const { ride_id } = req.params;
   const driver_id = req.user.uid;
   const data = req.body.data;
-  const info = { ...data ,requested_driver: driver_id }
-  console.log('driver directly rejected request')
+  const info = { ...data, requested_driver: driver_id };
+  console.log("driver directly rejected request");
   try {
     await Rides.rejectionHandler(info);
-    res.status(200)
+    res.status(200);
   } catch (err) {
     console.log(err);
-
   }
 });
-
 
 module.exports = router;
