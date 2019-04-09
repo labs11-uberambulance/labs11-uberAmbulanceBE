@@ -87,7 +87,6 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
     const {active, FCM_token, price} = await db('users as u').where({'u.firebase_id': firebase_id })
                 .join('drivers as d', 'u.firebase_id', 'd.firebase_id').first()
       // SHOULD CREATE A NEW RIDE AT THIS POINT, BEFORE MESSAGING
-      const rate = `${price}`;
       const [id] = await db("rides").insert(
         {
           driver_id: firebase_id,
@@ -109,7 +108,8 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
       };
       setTimeout(() => {
         Rides.notifyDriver(FCM_token, rideInfo);
-      }, 10000);
+        res.status(200).json({ message: "Contacting driver, we will update you soon." })
+      }, 5000);
     }
  catch (err) {
     console.log(err);
@@ -146,8 +146,10 @@ router.post("/driver/rejects/:ride_id", async (req, res, next) => {
   const { ride_id } = req.params;
   const driver_id = req.user.uid;
   const data = req.body.data;
+  const info = { ...data ,requested_driver: driver_id }
+  console.log('driver directly rejected request')
   try {
-    await Rides.rejectionHandler({ride_id, driver_id, ...data});
+    await Rides.rejectionHandler(info);
   } catch (err) {
     console.log(err);
   }
