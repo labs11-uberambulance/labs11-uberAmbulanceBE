@@ -177,6 +177,7 @@ router.get("/driver/accepts/:ride_id", async (req, res, next) => {
     return res.sendStatus(200);
   } catch (err) {
     console.log(err);
+    res.status(500).json({ message: err });
   }
 });
 
