@@ -31,7 +31,7 @@ async function findDrivers(location) {
   const driversInArea = [];
   function loopDrivers() {
     drivers.forEach(driver => {
-      if (driver.active) {
+      if (driver.active && driver.FCM_token) {
         const latlng = driver.location.latlng.split(",");
         const lat = Number(latlng[0]);
         const lng = Number(latlng[1]);
@@ -52,12 +52,11 @@ async function findDrivers(location) {
     minLat -= 0.066;
     minLng -= 0.066;
     loopDrivers();
-  } while (driversInArea.length <= 5);
-  console.log(driversInArea.length);
+  } while (driversInArea.length < 1);
   //Convert Drivers Locations to URL Format
   var destinations = [];
   driversInArea.forEach((driver, i) => {
-    console.log("driver in area: ", driver);
+    // console.log("driver in area: ", driver);
     const latlng = driver.location.latlng.split(",");
     const lat = Number(latlng[0]);
     const lng = Number(latlng[1]);
@@ -67,13 +66,13 @@ async function findDrivers(location) {
   const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${lng}&destinations=${destinations.join(
     ""
   )}&key=${process.env.GOOGLE_MAPS_KEY}`;
-  // Return Google distance information
+ 
+  // // Return Google distance information
   const results = await axios
     .get(url)
     .then(res => res.data)
     .catch(err => console.log(err));
   // Parse Google Distance information to return distance, and driver.
-
   var nearest = [];
   results.rows[0].elements.forEach((driver, i) => {
     nearest.push({
@@ -111,7 +110,7 @@ async function update(id, changes) {
 
 async function findLocale(village) {
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${village}&region=ug&components=country:UG&key=${
-    process.env.MYMAPSKEY
+    process.env.GOOGLE_MAPS_KEY
   }`;
   const results = await axios
     .get(url)
@@ -136,17 +135,26 @@ async function rejectionHandler(info) {
     : [info.requested_driver];
   const rejectsJSON = JSON.stringify({ rejects: updatedRejects });
   console.log("rejected array: ", updatedRejects);
+  // counter added to never exceed 5 rejections.
+  if(updatedRejects.length > 5){
+    return
+  }
   try {
-    const drivers = await db("drivers").where({ active: true });
-    // const drivers = await findDrivers(start);
-    const newDriver = drivers.filter(driver => {
+    const drivers = await findDrivers(start);
+    let newDriver = drivers.filter(driver => {
       if (
-        driver.price < info.price + 3 &&
-        !updatedRejects.includes(driver.firebase_id)
+        //Driver price should never change always first driver's price, 
+        driver.driver.price < info.price + 3 &&           
+        !updatedRejects.includes(driver.driver.firebase_id)
       )
         return true; // add check for FCM_token when we deploy
       return false;
     })[0];
+    if(!newDriver){
+      return
+    } else {
+      newDriver = newDriver.driver
+    }
     await db("rides")
       .where({ id: info.ride_id })
       .update({
@@ -154,7 +162,7 @@ async function rejectionHandler(info) {
         rejected_drivers: rejectsJSON
       });
     let rideInfo = { ...info, requested_driver: newDriver.firebase_id };
-    notifyDriver(null, rideInfo);
+    notifyDriver(newDriver.FCM_token, rideInfo);
   } catch (err) {
     console.log(err);
   }
@@ -163,14 +171,17 @@ async function rejectionHandler(info) {
 async function initDriverLoop(info) {
   setTimeout(async () => {
     const { ride_status, driver_id } = (await findRide(info.ride_id))[0];
+    console.log('STATUS: ', ride_status);
+    console.log('driver in ride object: ', driver_id);
+    console.log('driver that called timeout: ', info.requested_driver);
     if (
       ride_status === "waiting_on_driver" &&
       driver_id === info.requested_driver
     ) {
-      console.log("driver that rejected: ", driver_id);
+      // console.log("driver that rejected: ", driver_id);
       rejectionHandler(info);
     }
-  }, 10000);
+  }, 5000);
 }
 
 function notifyDriver(FCM_token, rideInfo) {
@@ -187,18 +198,18 @@ function notifyDriver(FCM_token, rideInfo) {
       name: rideInfo.name,
       phone: rideInfo.phone,
       price: `${rideInfo.price}`,
-      ride_id: `${rideInfo.ride_id}`
+      ride_id: `${rideInfo.ride_id}`, 
+      hospital: `${rideInfo.hospital}`
     }
   };
   console.log("waiting on driver: ", rideInfo.requested_driver);
-  // initDriverLoop(rideInfo);
   messaging
     .sendToDevice(FCM_token, message)
     .then(response => {
       // SET TIMER FUNCTION TO WAIT FOR RESPONSE OR MOVE ON.
-      // if (response.successCount !== 0) {
-      //   initDriverLoop(firebase_id, ride_id);
-      // }
+      if (response.successCount !== 0) {
+        initDriverLoop(rideInfo);
+      }
       return;
     })
     .catch(err => {

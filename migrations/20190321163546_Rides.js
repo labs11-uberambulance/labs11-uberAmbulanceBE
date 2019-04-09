@@ -17,6 +17,7 @@ exports.up = function(knex, Promise) {
     tbl.json('rejected_drivers')
     tbl.string("destination", 150);
     tbl.string("ride_status");
+    tbl.json("rejectedDrivers")
     tbl.timestamps(true, true);
   });
 };
