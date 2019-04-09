@@ -126,11 +126,9 @@ router.get("/driver/accepts/:ride_id", async (req, res, next) => {
     const ride = await db('rides').where({id})
 
     const mother = (await Users.findBy({'firebase_id':ride[0].mother_id}))[0]
-    console.log(mother)
     const driver = (await Users.findBy({'firebase_id':ride[0].driver_id}))[0]
-    console.log(driver)
     const {price} = (await Users.findDriversBy({'firebase_id':driver.firebase_id}))[0]
-    console.log(price)
+    
 
     // const {mother, driver, eta, to } = await db('rides as r').where({ 'r.id': id })
     //     .join('users as m', 'r.mother_id', 'm.firebase_id')
