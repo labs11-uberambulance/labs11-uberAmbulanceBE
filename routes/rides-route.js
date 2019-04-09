@@ -84,21 +84,9 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
   const { start, end, distance, name, phone, hospital } = req.body;
   try {
     // // proper
-    // const user = await db('users as u').where({'u.firebase_id': firebase_id })
-    //             .join('drivers as d', 'u.firebase_id', 'd.firebase_id').first()
-    // improper
-    const { FCM_token } = await db("users")
-      .where({ firebase_id })
-      .first();
-      console.log(FCM_token)
-    const active = true;
-    if (!active || !FCM_token) {
-      // should take over and search for another driver
-    } else {
+    const {active, FCM_token, price} = await db('users as u').where({'u.firebase_id': firebase_id })
+                .join('drivers as d', 'u.firebase_id', 'd.firebase_id').first()
       // SHOULD CREATE A NEW RIDE AT THIS POINT, BEFORE MESSAGING
-      const { price } = await db("drivers")
-        .where({ firebase_id })
-        .first();
       const rate = `${price}`;
       const [id] = await db("rides").insert(
         {
@@ -111,7 +99,6 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
         "id"
       );
       const rideInfo = {
-        counter: 0,
         distance,
         name,
         phone,
@@ -124,7 +111,7 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
         Rides.notifyDriver(FCM_token, rideInfo);
       }, 10000);
     }
-  } catch (err) {
+ catch (err) {
     console.log(err);
   }
 });
@@ -155,23 +142,16 @@ router.get("/driver/accepts/:ride_id", async (req, res, next) => {
   }
 });
 
-router.get("/driver/rejects/:ride_id", async (req, res, next) => {
-  const { ride_id } = req.params;
-  const driver_id = req.user.uid;
-  try {
-    await Rides.rejectionHandler(ride_id, driver_id);
-  } catch (err) {
-    console.log(err);
-  }
-});
 router.post("/driver/rejects/:ride_id", async (req, res, next) => {
   const { ride_id } = req.params;
   const driver_id = req.user.uid;
+  const data = req.body.data;
   try {
-    await Rides.rejectionHandler(ride_id, driver_id);
+    await Rides.rejectionHandler({ride_id, driver_id, ...data});
   } catch (err) {
     console.log(err);
   }
 });
+
 
 module.exports = router;

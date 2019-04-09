@@ -31,7 +31,8 @@ async function findDrivers(location) {
   const driversInArea = [];
   function loopDrivers() {
     drivers.forEach(driver => {
-      if (driver.active) {
+      if (driver.active && driver.FCM_token) {
+        console.log(driver)
         const latlng = driver.location.latlng.split(",");
         const lat = Number(latlng[0]);
         const lng = Number(latlng[1]);
@@ -52,7 +53,7 @@ async function findDrivers(location) {
     minLat -= 0.066;
     minLng -= 0.066;
     loopDrivers();
-  } while (driversInArea.length <= 5);
+  } while (driversInArea.length < 1);
   console.log(driversInArea.length);
   //Convert Drivers Locations to URL Format
   var destinations = [];
@@ -63,19 +64,22 @@ async function findDrivers(location) {
     const lng = Number(latlng[1]);
     destinations.push(`${lat}%2C${lng}%7C`);
   });
+  console.log(destinations)
   // Format Google URL with Origin, Destinations and API
   const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${lng}&destinations=${destinations.join(
     ""
   )}&key=${process.env.GOOGLE_MAPS_KEY}`;
-  // Return Google distance information
+ 
+  // // Return Google distance information
   const results = await axios
     .get(url)
     .then(res => res.data)
     .catch(err => console.log(err));
   // Parse Google Distance information to return distance, and driver.
-
+  console.log(results)
   var nearest = [];
   results.rows[0].elements.forEach((driver, i) => {
+    console.log(driver)
     nearest.push({
       driver: driversInArea[i],
       distance: driver.distance,
@@ -123,6 +127,7 @@ async function findLocale(village) {
 // LOGIC TO BOOK A DRIVER AND FIND NEW DRIVER IF REQUEST REJECTED OR TIMER RUNS OUT
 
 async function rejectionHandler(info) {
+  console.log("INFO",info)
   const { ride_status, driver_id, start, rejected_drivers } = (await findRide(
     info.ride_id
   ))[0];
@@ -136,18 +141,25 @@ async function rejectionHandler(info) {
     : [info.requested_driver];
   const rejectsJSON = JSON.stringify({ rejects: updatedRejects });
   console.log("rejected array: ", updatedRejects);
+  // counter added to never exceed 5 rejections.
+  if(updatedRejects.length > 5){
+    return
+  }
   try {
     const drivers = await findDrivers(start)
-    // const drivers = await findDrivers(start);
     const newDriver = drivers.filter(driver => {
-      if (
-        //Driver price should never change always first driver's price.
-        driver.price < info.price + 3 &&           
-        !updatedRejects.includes(driver.firebase_id)
-      )
-        return true; // add check for FCM_token when we deploy
-      return false;
-    })[0];
+      // if (
+      //   //Driver price should never change always first driver's price, 
+      //   driver.price < info.price + 3 &&           
+      //   !updatedRejects.includes(driver.firebase_id)
+      // // )
+      //   return true; // add check for FCM_token when we deploy
+      return true;
+    })[1];
+    console.log('NEWDRIVER', newDriver)
+    if(!newDriver){
+      return
+    }
     await db("rides")
       .where({ id: info.ride_id })
       .update({
@@ -155,12 +167,7 @@ async function rejectionHandler(info) {
         rejected_drivers: rejectsJSON
       });
     let rideInfo = { ...info, requested_driver: newDriver.firebase_id };
-    if(count > 10){
-      break
-    } else{
-      notifyDriver(newDriver.FCM_token, rideInfo);
-    }
-    // Count Meter if >10 break 
+    notifyDriver(newDriver.FCM_token, rideInfo);
   } catch (err) {
     console.log(err);
   }
@@ -176,7 +183,7 @@ async function initDriverLoop(info) {
       console.log("driver that rejected: ", driver_id);
       rejectionHandler(info);
     }
-  }, 10000);
+  }, 5000);
 }
 
 function notifyDriver(FCM_token, rideInfo) {
@@ -193,7 +200,8 @@ function notifyDriver(FCM_token, rideInfo) {
       name: rideInfo.name,
       phone: rideInfo.phone,
       price: `${rideInfo.price}`,
-      ride_id: `${rideInfo.ride_id}`
+      ride_id: `${rideInfo.ride_id}`, 
+      hospital: `${rideInfo.hospital}`
     }
   };
   console.log("waiting on driver: ", rideInfo.requested_driver);
@@ -203,7 +211,7 @@ function notifyDriver(FCM_token, rideInfo) {
     .then(response => {
       // SET TIMER FUNCTION TO WAIT FOR RESPONSE OR MOVE ON.
       if (response.successCount !== 0) {
-        initDriverLoop(firebase_id, ride_id);
+        initDriverLoop(rideInfo);
       }
       return;
     })
