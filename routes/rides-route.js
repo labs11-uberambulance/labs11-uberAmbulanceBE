@@ -5,6 +5,7 @@
 
 const router = require("express").Router();
 const Rides = require("../models/rides-model.js");
+const Users = require('../models/user-model');
 const fbAdmin = require("firebase-admin");
 const twilio = require("../services/twilio");
 const db = require("../data/dbConfig");
@@ -120,21 +121,31 @@ router.get("/driver/accepts/:ride_id", async (req, res, next) => {
   const { ride_id: id } = req.params;
   try {
     // // Move on with filling in rest of rides object.
-    // await db('rides').where({ id }).update({ status: '...' })
+    await db('rides').where({ id }).update({ ride_status: 'Driver en route' })
     // // Twillio takes over
-    // const {mother, driver, eta, to, price } = await db('drivers').where({ 'r.id': id })
-    //     .join('mothers as m', 'r.mother_id', 'm.firebase_id')
-    //     .join('drivers as d', 'r.driver_id', 'd.firebase_id')
-    //     .select('m.name as mother', 'd.name as driver', 'm.phone as to', 'r.eta', 'r.price as price')
-    const to = "+";
-    const mother = "Lauren";
-    const driver = "James";
-    const price = 2;
-    const eta = 15;
+    const ride = await db('rides').where({id})
+
+    const mother = (await Users.findBy({'firebase_id':ride[0].mother_id}))[0]
+    console.log(mother)
+    const driver = (await Users.findBy({'firebase_id':ride[0].driver_id}))[0]
+    console.log(driver)
+    const {price} = (await Users.findDriversBy({'firebase_id':driver.firebase_id}))[0]
+    console.log(price)
+
+    // const {mother, driver, eta, to } = await db('rides as r').where({ 'r.id': id })
+    //     .join('users as m', 'r.mother_id', 'm.firebase_id')
+    //     .join('users as driver', 'r.driver_id', 'driver.firebase_id')
+    //     .select('m.name as mother', 'driver.name as driver', 'm.phone as to'/*, 'driver.price as price'*/)
+    // const to = "+";
+    // const mother = "Lauren";
+    // const driver = "James";
+    // const price = 2;
+    // const eta = 15;
+    // console.log(mother, driver )
     await twilio.messages.create({
       from: "+19179709371",
-      to: "+15058503318",
-      body: `${mother}, ${driver} is on their way, the total price will be ${price}USh. Estimated time: ${eta}mins.`
+      to: `${mother.phone}`,
+      body: `${mother.name}, ${driver.name} is on their way, the total price will be ${price}USh.`
     });
     return res.sendStatus(200);
   } catch (err) {
@@ -150,8 +161,10 @@ router.post("/driver/rejects/:ride_id", async (req, res, next) => {
   console.log('driver directly rejected request')
   try {
     await Rides.rejectionHandler(info);
+    res.status(200)
   } catch (err) {
     console.log(err);
+
   }
 });
 
