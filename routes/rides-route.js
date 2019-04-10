@@ -72,10 +72,13 @@ router.get("/driver", (req, res) => {
       try {
         let rides = await data.map(async ride => {
           try {
-            const destName = await Rides.reverseGeocodeLatLng(ride.destination);
-            console.log("ABOVE: ", destName.results[0]);
-            console.log("HERE: ", { ...ride, destName });
-            return { ...ride, destName };
+            const destNameMother = await Rides.reverseGeocodeLatLng(ride.start);
+            const destNameHospital = await Rides.reverseGeocodeLatLng(
+              ride.destination
+            );
+            // console.log("ABOVE: ", destName.results[0]);
+            // console.log("HERE: ", { ...ride, destName });
+            return { ...ride, destNameMother, destNameHospital };
           } catch (error) {
             console.log("Error reverse geocoding driver ride");
           }
