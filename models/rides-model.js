@@ -2,6 +2,7 @@ const db = require("../data/dbConfig.js");
 const Users = require("./user-model.js");
 const axios = require("axios");
 const fbAdmin = require("firebase-admin");
+const twilio = require("../services/twilio");
 
 require("dotenv").config();
 module.exports = {
@@ -135,9 +136,13 @@ async function reverseGeocodeLatLng(latlng) {
 // LOGIC TO BOOK A DRIVER AND FIND NEW DRIVER IF REQUEST REJECTED OR TIMER RUNS OUT
 
 async function rejectionHandler(info) {
-  const { ride_status, driver_id, start, rejected_drivers } = (await findRide(
-    info.ride_id
-  ))[0];
+  const {
+    ride_status,
+    driver_id,
+    start,
+    rejected_drivers,
+    mother_id
+  } = (await findRide(info.ride_id))[0];
   if (
     ride_status !== "waiting_for_driver" &&
     driver_id !== info.requested_driver
@@ -150,6 +155,22 @@ async function rejectionHandler(info) {
   console.log("rejected array: ", updatedRejects);
   // counter added to never exceed 5 rejections.
   if (updatedRejects.length > 5) {
+    await db("rides")
+      .where({ id: info.ride_id })
+      .update({
+        // TODO: delete the ride? keeping it for now, easier when testing
+        driver_id: "driver0FIREBASE",
+        rejected_drivers: rejectsJSON
+      });
+    // notify mother that there are no drivers
+    const mother = (await Users.findBy({ firebase_id: mother_id }))[0];
+    await twilio.messages.create({
+      from: "+19179709371",
+      to: `${mother.phone}`,
+      body: `${
+        mother.name
+      }, we were unable to coordinate a ride for you at this time. Please try again later or call <THE BACKUP HOTLINE>`
+    });
     return;
   }
   try {

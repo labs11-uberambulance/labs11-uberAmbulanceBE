@@ -186,10 +186,11 @@ router.post("/driver/rejects/:ride_id", async (req, res, next) => {
   const driver_id = req.user.uid;
   const data = req.body.data;
   const info = { ...data, requested_driver: driver_id };
-  console.log("driver directly rejected request");
+  console.log("driver directly rejected request ", data);
   try {
     await Rides.rejectionHandler(info);
-    res.status(200);
+    console.log("DONE");
+    res.sendStatus(200);
   } catch (err) {
     console.log(err);
   }
