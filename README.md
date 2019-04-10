@@ -127,9 +127,9 @@ drivers = [
     photo_url: "http://lorempixel.com/640/480/people"
     },
   distance: {
-  // Returned from google represents the distance that driver is from our user. 
+  // Returned from google represents the distance that driver is from our user.
         text: "99.4 km",
-        value: 99357 
+        value: 99357
     },
   duration: {
   // Returned from google represents the time it would take our driver to get to our user.
@@ -173,7 +173,7 @@ ride = {
   destination_address: "destination_addy_here",
   // json, street address or description,
   ride_status: "complete"
-  // string, indicates current status of ride (en route, complete, etc.)
+  // string, indicates current status of ride ["waiting_on_driver", "Driver en route", "arrived_at_mother", "complete"]
 };
 ```
 
@@ -232,13 +232,15 @@ Authorization: "eyJhbG...";
 
 ## Rides
 
-| Method    | URL                 | Description                                                                                                                                                                                                      |
-| --------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| TODO-POST | /api/rides/drivers        | Include `{ location: 'lat,lng' }` in request body. Returns [nearest driver data](###Nearest-driver-data) (ref. data schema above), returns an array of the nearest active drivers with a minimum of 5.                                        |
-| POST | /api/rides/request/driver/:firebase_id  | The firebase_id should belong to the driver the mother selected. Include `{ end, start, distance, hospital, name, phone }` in request body. _end='lat,lng' of hospital_, _start='lat,lng' of mother's location_, _hospital=name of hospital_, _name=name of mother_, _phone=phone number of mother_. Returns nothing. Will begin Twilio actions on the backend, mother and driver will be updated that way.                                       |
-| TODO-POST | /api/rides/new-ride | Include data as found in [new ride data](###New-ride-data) in request body. Creates a new ride and sends request to driver.                                                                                      |
-| TODO-GET  | /api/rides/         | Include `{ rideId: id }` in request body. Returns [complete ride data](###complete-ride-data).                                                                                                                   |
-| TODO-GET  | /api/rides/         | Include `{ userId: id }` in request body. Returns **`array`** of [complete ride data](###complete-ride-data) matching `userId`.                                                                                  |
-| TODO-PUT  | /api/rides/         | Include data in format of [complete ride data](###complete-ride-data), elements not included will not be updated. Updates ride data, returns ride data in format of [complete ride data](###complete-ride-data). |
-|POST| /api/rides/driver/rejects/:ride_id | Include data object, inside body, given in push notification. Will gracefully handle rejection and notify next driver with price close to first driver. | 
-|GET| /api/rides/driver/accepts/:ride_id | Will notify mother, via twilio that the driver has accepted.
+| Method    | URL                                    | Description                                                                                                                                                                                                                                                                                                                                                                                                  |
+| --------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| TODO-POST | /api/rides/drivers                     | Include `{ location: 'lat,lng' }` in request body. Returns [nearest driver data](###Nearest-driver-data) (ref. data schema above), returns an array of the nearest active drivers with a minimum of 5.                                                                                                                                                                                                       |
+| POST      | /api/rides/request/driver/:firebase_id | The firebase*id should belong to the driver the mother selected. Include `{ end, start, distance, hospital, name, phone }` in request body. \_end='lat,lng' of hospital*, _start='lat,lng' of mother's location_, _hospital=name of hospital_, _name=name of mother_, _phone=phone number of mother_. Returns nothing. Will begin Twilio actions on the backend, mother and driver will be updated that way. |
+| TODO-POST | /api/rides/new-ride                    | Include data as found in [new ride data](###New-ride-data) in request body. Creates a new ride and sends request to driver.                                                                                                                                                                                                                                                                                  |
+| TODO-GET  | /api/rides/                            | Include `{ rideId: id }` in request body. Returns [complete ride data](###complete-ride-data).                                                                                                                                                                                                                                                                                                               |
+| TODO-GET  | /api/rides/                            | Include `{ userId: id }` in request body. Returns **`array`** of [complete ride data](###complete-ride-data) matching `userId`.                                                                                                                                                                                                                                                                              |
+| TODO-PUT  | /api/rides/                            | Include data in format of [complete ride data](###complete-ride-data), elements not included will not be updated. Updates ride data, returns ride data in format of [complete ride data](###complete-ride-data).                                                                                                                                                                                             |
+| POST      | /api/rides/driver/rejects/:ride_id     | Include data object, inside body, given in push notification. Will gracefully handle rejection and notify next driver with price close to first driver.                                                                                                                                                                                                                                                      |
+| GET       | /api/rides/driver/accepts/:ride_id     | Will notify mother, via twilio that the driver has accepted. Updates `ride_status` to `Driver en route`                                                                                                                                                                                                                                                                                                      |
+| GET       | /api/rides/driver/arrives/:ride_id     | Will notify mother, via twilio that the driver has arrived. Updates `ride_status` to `arrived_at_mother`.                                                                                                                                                                                                                                                                                                    |
+| GET       | /api/rides/driver/delivers/:ride_id    | Will notify mother, via twilio that the ride is complete. Updates `ride_status` to `complete`.                                                                                                                                                                                                                                                                                                               |
