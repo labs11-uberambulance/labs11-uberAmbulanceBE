@@ -181,6 +181,54 @@ router.get("/driver/accepts/:ride_id", async (req, res, next) => {
   }
 });
 
+router.get("/driver/arrives/:ride_id", async (req, res, next) => {
+  const { ride_id: id } = req.params;
+  try {
+    // // Move on with filling in rest of rides object.
+    await db("rides")
+      .where({ id })
+      .update({ ride_status: "arrived_at_mother" });
+    // // Twillio takes over
+    const ride = await db("rides").where({ id });
+
+    const mother = (await Users.findBy({ firebase_id: ride[0].mother_id }))[0];
+    const driver = (await Users.findBy({ firebase_id: ride[0].driver_id }))[0];
+    await twilio.messages.create({
+      from: "+19179709371",
+      to: `${mother.phone}`,
+      body: `${mother.name}, ${driver.name} has arrived!`
+    });
+    return res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err });
+  }
+});
+
+router.get("/driver/delivers/:ride_id", async (req, res, next) => {
+  const { ride_id: id } = req.params;
+  try {
+    // // Move on with filling in rest of rides object.
+    await db("rides")
+      .where({ id })
+      .update({ ride_status: "complete" });
+    // // Twillio takes over
+    const ride = await db("rides").where({ id });
+
+    const mother = (await Users.findBy({ firebase_id: ride[0].mother_id }))[0];
+    const driver = (await Users.findBy({ firebase_id: ride[0].driver_id }))[0];
+    await twilio.messages.create({
+      from: "+19179709371",
+      to: `${mother.phone}`,
+      body: `${mother.name}, thank you for using BirthRide`
+    });
+    return res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err });
+  }
+});
+
 router.post("/driver/rejects/:ride_id", async (req, res, next) => {
   const { ride_id } = req.params;
   const driver_id = req.user.uid;
