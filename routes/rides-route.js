@@ -120,6 +120,7 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
         mother_id,
         start,
         destination: end,
+        price,
         ride_status: "waiting_on_driver"
       },
       "id"
@@ -147,29 +148,19 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
 router.get("/driver/accepts/:ride_id", async (req, res, next) => {
   const { ride_id: id } = req.params;
   try {
-    // // Move on with filling in rest of rides object.
-    await db("rides")
-      .where({ id })
-      .update({ ride_status: "Driver en route" });
-    // // Twillio takes over
+    // get the ride, associated info from mother and driver
     const ride = await db("rides").where({ id });
-
     const mother = (await Users.findBy({ firebase_id: ride[0].mother_id }))[0];
     const driver = (await Users.findBy({ firebase_id: ride[0].driver_id }))[0];
     const { price } = (await Users.findDriversBy({
       firebase_id: driver.firebase_id
     }))[0];
+    // // Update the ride data.
+    await db("rides")
+      .where({ id })
+      .update({ ride_status: "Driver en route", price });
 
-    // const {mother, driver, eta, to } = await db('rides as r').where({ 'r.id': id })
-    //     .join('users as m', 'r.mother_id', 'm.firebase_id')
-    //     .join('users as driver', 'r.driver_id', 'driver.firebase_id')
-    //     .select('m.name as mother', 'driver.name as driver', 'm.phone as to'/*, 'driver.price as price'*/)
-    // const to = "+";
-    // const mother = "Lauren";
-    // const driver = "James";
-    // const price = 2;
-    // const eta = 15;
-    // console.log(mother, driver )
+    // // Twillio takes over
     await twilio.messages.create({
       from: "+19179709371",
       to: `${mother.phone}`,
