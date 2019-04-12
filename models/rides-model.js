@@ -224,7 +224,7 @@ async function initDriverLoop(info) {
       // console.log("driver that rejected: ", driver_id);
       rejectionHandler(info);
     }
-  }, 5000);
+  }, 600000);
 }
 
 function notifyDriver(FCM_token, rideInfo) {
