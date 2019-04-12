@@ -149,7 +149,8 @@ async function rejectionHandler(info) {
     driver_id,
     start,
     rejected_drivers,
-    mother_id
+    mother_id,
+    price
   } = (await findRide(info.ride_id))[0];
   if (
     ride_status !== "waiting_for_driver" &&
@@ -186,7 +187,7 @@ async function rejectionHandler(info) {
     let newDriver = drivers.filter(driver => {
       if (
         //Driver price should never change always first driver's price,
-        driver.driver.price < info.price + 3 &&
+        driver.driver.price < price + 3 &&
         !updatedRejects.includes(driver.driver.firebase_id)
       )
         return true; // add check for FCM_token when we deploy
