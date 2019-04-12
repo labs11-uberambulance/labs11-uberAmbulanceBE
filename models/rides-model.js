@@ -46,15 +46,23 @@ async function findDrivers(location) {
         }
       }
     });
+    if(driversInArea.length === 0){
+    console.log(maxLng-lng)
+    }
+    else{
+      console.log(driversInArea.length)
+    }
   }
   loopDrivers();
   do {
+    console.log(maxLng-lng)
     maxLat += 0.066;
     maxLng += 0.066;
     minLat -= 0.066;
     minLng -= 0.066;
     loopDrivers();
-  } while (driversInArea.length < 1);
+    console.log(driversInArea.length)
+  } while (maxLng-lng < .6);
   //Convert Drivers Locations to URL Format
   var destinations = [];
   driversInArea.forEach((driver, i) => {
