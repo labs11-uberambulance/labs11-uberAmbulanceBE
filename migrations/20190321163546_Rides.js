@@ -20,7 +20,9 @@ exports.up = function(knex, Promise) {
     // start and destination in format:
     // {latlng: "lat,lng", name: "name", descr: "additional info"}
     tbl.string("start", 150);
+    tbl.string("start_name");
     tbl.string("destination", 150);
+    tbl.string("dest_name");
     tbl.integer("price");
     tbl.json("rejected_drivers");
     tbl.string("ride_status");
