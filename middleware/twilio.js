@@ -32,7 +32,6 @@ module.exports.handle_incoming_messages = async (req, res, next) => {
             const newMother = await Users.addMother({
                 firebase_id: newUser.firebase_id
             })
-            console.log(newMother)
             const [id] = await db("rides").insert(
                 {
                     driver_id: first.firebase_id,
@@ -65,9 +64,9 @@ module.exports.handle_incoming_messages = async (req, res, next) => {
         twiml.message('Sorry please include a Drop off health center or hospital. Your text should be formatted like this: NAME**CLOSESTCITY**DROPOFFLOCATION');
     } 
     else if (Name === '' || Pickup === '' || Dropoff === "" ) {
-        twiml.message("Sorry  it looks like you're request is missing some critical information. Your text should be formatted like this: NAME**CLOSESTCITY**DROPOFFLOCATION");
+        twiml.message("Sorry it looks like you're request is missing some critical information. Your text should be formatted like this: NAME**CLOSESTCITY**DROPOFFLOCATION");
     } else {
-        twiml.message('Thank you for contacting Birthride. We are currently working to find the closest driver to you. We thank you for your patience.');
+        twiml.message("Sorry it looks like you're request is missing some critical information. Your text should be formatted like this: NAME**CLOSESTCITY**DROPOFFLOCATION");
     }
     res.writeHead(200, {'Content-Type': 'text/xml'});
     res.end(twiml.toString());
