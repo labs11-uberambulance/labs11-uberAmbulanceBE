@@ -43,7 +43,7 @@ server.use("/api/rides", protect, ridesRoutes);
 server.use("/api/users/", protect, userRoutes);
 server.use("/api/admin/users/", protect, restrict, userRoutesAdmin);
 server.use("/api/notifications", protect, notificationsRoutes);
-server.use("/api/twilio", protect, twilioRoutes);
+server.use("/api/twilio", twilioRoutes);
 
 // Test routes
 server.get("/", async (req, res) => {

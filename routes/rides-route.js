@@ -65,30 +65,30 @@ router.get("/mother", (req, res) => {
 router.get("/driver", (req, res) => {
   const id = req.user.user_id; // gives firebase_id
   Rides.driversRides(id)
+    // .then(data => {
+    //   return data.filter((ride, i) => i < 6);
+    // })
     .then(data => {
-      return data.filter((ride, i) => i < 6);
-    })
-    .then(async data => {
-      try {
-        let rides = await data.map(async ride => {
-          try {
-            const destNameMother = await Rides.reverseGeocodeLatLng(ride.start);
-            const destNameHospital = await Rides.reverseGeocodeLatLng(
-              ride.destination
-            );
-            // console.log("ABOVE: ", destName.results[0]);
-            // console.log("HERE: ", { ...ride, destName });
-            return { ...ride, destNameMother, destNameHospital };
-          } catch (error) {
-            console.log("Error reverse geocoding driver ride");
-          }
-        });
-        rides = await Promise.all(rides);
-        console.log("GET /rides/driver : ", rides);
-        res.status(200).json(rides);
-      } catch (error) {
-        console.log(error);
-      }
+      // try {
+      //   let rides = await data.map(async ride => {
+      //     try {
+      //       const destNameMother = await Rides.reverseGeocodeLatLng(ride.start);
+      //       const destNameHospital = await Rides.reverseGeocodeLatLng(
+      //         ride.destination
+      //       );
+      //       // console.log("ABOVE: ", destName.results[0]);
+      //       // console.log("HERE: ", { ...ride, destName });
+      //       return { ...ride, destNameMother, destNameHospital };
+      //     } catch (error) {
+      //       console.log("Error reverse geocoding driver ride");
+      //     }
+      //   });
+      // rides = await Promise.all(rides);
+      console.log("GET /rides/driver : ", data);
+      res.status(200).json(data);
+      // } catch (error) {
+      //   console.log(error);
+      // }
     })
     .catch(error => {
       res.status(500).json({ message: "Cannot locate their rides", error });
@@ -106,7 +106,7 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
   // return res.status(404).json({ message: "Still building : )" });
   let { firebase_id } = req.params;
   const mother_id = req.user.uid;
-  const { start, end, distance, name, phone, hospital } = req.body;
+  const { start, end, distance, name, phone, hospital, startName } = req.body;
   try {
     // // proper
     const { active, FCM_token, price } = await db("users as u")
@@ -119,7 +119,9 @@ router.post("/request/driver/:firebase_id", async (req, res, next) => {
         driver_id: firebase_id,
         mother_id,
         start,
+        start_name: startName,
         destination: end,
+        dest_name: hospital,
         price,
         ride_status: "waiting_on_driver"
       },
