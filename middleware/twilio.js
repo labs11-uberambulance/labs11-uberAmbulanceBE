@@ -3,6 +3,7 @@ const Rides = require('../models/rides-model')
 const { MessagingResponse } = require('twilio').twiml;
 const db = require("../data/dbConfig");
 const faker = require('faker');
+const axios = require('axios');
 
 module.exports.handle_incoming_messages = async (req, res, next) => {
     const twiml = new MessagingResponse();
@@ -11,13 +12,19 @@ module.exports.handle_incoming_messages = async (req, res, next) => {
     var message = clientMessage.split('**')
     var Name = message[0];
     var Pickup = message[1];
-    var Dropoff = message[2];
-    if (Name && Pickup && Dropoff) {
+    if (Name && Pickup) {
         const googlePickup = await Rides.findLocale(Pickup)
         const googleLatLng = googlePickup.results[0].geometry.location;
         var latlngArr = []
         latlngArr.push(Object.values(googleLatLng))
         var latlng = latlngArr.join()
+        const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latlng}&radius=8000&type=hospital&key=${process.env.GOOGLE_MAPS_KEY}`
+        const destinations = await axios.get(url)
+        const closest = destinations.data.results[0]
+        const closestLatLng = closest.geometry.location
+        var latlngClo = [];
+        latlngClo.push(Object.values(closestLatLng))
+        var latlngClosest = latlngClo.join()
         try{
             const drivers = await (Rides.findDrivers(latlng))
             const first = drivers[0].driver
@@ -38,7 +45,8 @@ module.exports.handle_incoming_messages = async (req, res, next) => {
                     mother_id: newUser.firebase_id,
                     start: latlng,
                     start_name: googlePickup.results[0].formatted_address,
-                    dest_name: Dropoff,
+                    dest_name: closest.name,
+                    destination: latlngClosest,
                     price: first.price,
                     ride_status: "waiting_on_driver"
                 },
@@ -50,7 +58,7 @@ module.exports.handle_incoming_messages = async (req, res, next) => {
                 phone: motherPhone,
                 price: first.price,
                 ride_id: id,
-                hospital: Dropoff
+                hospital: closest.name
             }
             Rides.notifyDriver(first.FCM_token, rideInfo)
             twiml.message(`Thank you for your request. We are coordinating your ride! Your User_ID is ${newUser.firebase_id}, please hold onto this in case you wish to report a problem in the future`);
