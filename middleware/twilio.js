@@ -54,12 +54,12 @@ module.exports.handle_incoming_messages = async (req, res, next) => {
                 hospital: Dropoff
             }
             Rides.notifyDriver(first.FCM_token, rideInfo)
+            twiml.message(`Thank you for your request. We are coordinating your ride! Your User_ID is ${newUser.firebase_id}, please hold onto this in case you wish to report a problem in the future`);
         }
        catch (err){
            console.log(err)
            twiml.message("We apologize, there's been an error in our server. Please contact this HOTLINE to coordinate a ride.");
        }
-        twiml.message(`Thank you for your request. We are coordinating your ride! Your User_ID is ${newUser.firebase_id}, please hold onto this incase you wish to report a problem in the future`);
     } 
     else if(Name && Pickup && !Dropoff) {
         twiml.message('Sorry please include a Drop off health center or hospital. Your text should be formatted like this: NAME**CLOSESTCITY**DROPOFFLOCATION');
