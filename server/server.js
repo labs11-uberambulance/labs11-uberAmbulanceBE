@@ -17,7 +17,7 @@ const helmet = require("helmet");
 //   }
 //   next();
 // });
-// server.use(express.urlencoded({ extended: false }));
+server.use(express.urlencoded({ extended: false }));
 // GLOBAL SERVICES
 require("../services/firebase-admin");
 
