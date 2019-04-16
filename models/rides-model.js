@@ -46,23 +46,22 @@ async function findDrivers(location) {
         }
       }
     });
-    if(driversInArea.length === 0){
-    console.log(maxLng-lng)
-    }
-    else{
-      console.log(driversInArea.length)
+    if (driversInArea.length === 0) {
+      console.log(maxLng - lng);
+    } else {
+      console.log(driversInArea.length);
     }
   }
   loopDrivers();
   do {
-    console.log(maxLng-lng)
+    console.log(maxLng - lng);
     maxLat += 0.066;
     maxLng += 0.066;
     minLat -= 0.066;
     minLng -= 0.066;
     loopDrivers();
-    console.log(driversInArea.length)
-  } while (maxLng-lng < .6);
+    console.log(driversInArea.length);
+  } while (maxLng - lng < 0.6);
   //Convert Drivers Locations to URL Format
   var destinations = [];
   driversInArea.forEach((driver, i) => {
@@ -234,7 +233,8 @@ function notifyDriver(FCM_token, rideInfo) {
       title: `You have a new ride request! (${rideInfo.distance}km) `,
       body: `${rideInfo.name} needs to be taken to ${
         rideInfo.hospital
-      }, -price: ${rideInfo.price}USh`
+      }, -price: ${rideInfo.price}USh`,
+      clickAction: "https://birthride.herokuapp.com/"
     },
     data: {
       distance: `${rideInfo.distance}`,
@@ -245,9 +245,10 @@ function notifyDriver(FCM_token, rideInfo) {
       hospital: `${rideInfo.hospital}`
     }
   };
+  const options = { timeToLive: 60 * 10 };
   console.log("waiting on driver: ", rideInfo.requested_driver);
   messaging
-    .sendToDevice(FCM_token, message)
+    .sendToDevice(FCM_token, message, options)
     .then(response => {
       // SET TIMER FUNCTION TO WAIT FOR RESPONSE OR MOVE ON.
       if (response.successCount !== 0) {
