@@ -34,6 +34,7 @@ router.get("/", async (req, res) => {
     }
   } catch (error) {
     console.error("error finding by firebase_id: ", error);
+    res.status(400).json({ message: error });
   }
 });
 
@@ -69,6 +70,7 @@ router.post("/onboard/:id", async (req, res) => {
     }
   } catch (error) {
     console.error("error with POST to /onboard: ", error);
+    res.status(400).json({ message: error });
   }
 });
 
@@ -151,9 +153,8 @@ router.put("/update/:id", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "user failed to update." });
+    res.status(500).json({ message: error });
   }
 });
-
 
 module.exports = router;
