@@ -42,16 +42,6 @@ router.post("/new-ride", (req, res) => {
       res.status(500).json({ message: `Failed to Coordinate Ride`, error });
     });
 });
-
-// Get a specified Ride
-router.get("/:id", (req, res) => {
-  const rideId = req.params.id;
-  Rides.findRide(rideId)
-    .then(data => res.status(200).json(data))
-    .catch(error => {
-      res.status(500).json({ message: "Cannot locate that ride", error });
-    });
-});
 // Get a mothers rides
 router.get("/mother", (req, res) => {
   const id = req.user.user_id; // gives firebase_id
@@ -92,6 +82,16 @@ router.get("/driver", (req, res) => {
     })
     .catch(error => {
       res.status(500).json({ message: "Cannot locate their rides", error });
+    });
+});
+
+// Get a specified Ride
+router.get("/:id", (req, res) => {
+  const rideId = req.params.id;
+  Rides.findRide(rideId)
+    .then(data => res.status(200).json(data))
+    .catch(error => {
+      res.status(500).json({ message: "Cannot locate that ride", error });
     });
 });
 
