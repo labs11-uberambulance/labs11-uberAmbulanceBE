@@ -44,8 +44,8 @@ router.post("/new-ride", (req, res) => {
 });
 
 // Get a specified Ride
-router.get("/", (req, res) => {
-  const rideId = req.body.ride_id;
+router.get("/:id", (req, res) => {
+  const rideId = req.params.id;
   Rides.findRide(rideId)
     .then(data => res.status(200).json(data))
     .catch(error => {
