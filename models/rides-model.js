@@ -62,6 +62,10 @@ async function findDrivers(location) {
     loopDrivers();
     console.log(driversInArea.length);
   } while (maxLng - lng < 0.6);
+  // if there are no drivers in the area:
+  if (!driversInArea.length) {
+    throw new Error("No Drivers in Area");
+  }
   //Convert Drivers Locations to URL Format
   var destinations = [];
   driversInArea.forEach((driver, i) => {
