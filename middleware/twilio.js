@@ -12,8 +12,11 @@ module.exports.handle_incoming_messages = async (req, res, next) => {
   var message = clientMessage.split("**");
   var Name = message[0];
   var Pickup = message[1];
+  let Dropoff = "";
+  console.log(Name, Pickup);
   if (Name && Pickup) {
     const googlePickup = await Rides.findLocale(Pickup);
+    console.log(googlePickup);
     const googleLatLng = googlePickup.results[0].geometry.location;
     var latlngArr = [];
     latlngArr.push(Object.values(googleLatLng));
@@ -22,6 +25,7 @@ module.exports.handle_incoming_messages = async (req, res, next) => {
       process.env.GOOGLE_MAPS_KEY
     }`;
     const destinations = await axios.get(url);
+    console.log(destinations);
     const closest = destinations.data.results[0];
     const closestLatLng = closest.geometry.location;
     var latlngClo = [];
@@ -74,19 +78,20 @@ module.exports.handle_incoming_messages = async (req, res, next) => {
         twiml.message(
           "We apologize, there are currently no drivers in your area. Please contact this HOTLINE to coordinate a ride."
         );
+      } else {
+        twiml.message(
+          "We apologize, there's been an error in our server. Please contact this HOTLINE to coordinate a ride."
+        );
       }
-      twiml.message(
-        "We apologize, there's been an error in our server. Please contact this HOTLINE to coordinate a ride."
-      );
     }
-  } else if (Name && Pickup && !Dropoff) {
-    twiml.message(
-      "Sorry please include a Drop off health center or hospital. Your text should be formatted like this: NAME**CLOSESTCITY**DROPOFFLOCATION"
-    );
-  } else if (Name === "" || Pickup === "" || Dropoff === "") {
-    twiml.message(
-      "Sorry it looks like you're request is missing some critical information. Your text should be formatted like this: NAME**CLOSESTCITY**DROPOFFLOCATION"
-    );
+    // } else if (Name && Pickup && !Dropoff) {
+    //   twiml.message(
+    //     "Sorry please include a Drop off health center or hospital. Your text should be formatted like this: NAME**CLOSESTCITY**DROPOFFLOCATION"
+    //   );
+    // } else if (Name === "" || Pickup === "" || Dropoff === "") {
+    //   twiml.message(
+    //     "Sorry it looks like you're request is missing some critical information. Your text should be formatted like this: NAME**CLOSESTCITY**DROPOFFLOCATION"
+    //   );
   } else {
     twiml.message(
       "Sorry it looks like you're request is missing some critical information. Your text should be formatted like this: NAME**CLOSESTCITY**DROPOFFLOCATION"
