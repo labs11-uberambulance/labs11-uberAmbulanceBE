@@ -62,6 +62,10 @@ async function findDrivers(location) {
     loopDrivers();
     console.log(driversInArea.length);
   } while (maxLng - lng < 0.6);
+  // if there are no drivers in the area:
+  if (!driversInArea.length) {
+    throw new Error("No Drivers in Area");
+  }
   //Convert Drivers Locations to URL Format
   var destinations = [];
   driversInArea.forEach((driver, i) => {
@@ -151,11 +155,26 @@ async function rejectionHandler(info) {
     mother_id,
     price
   } = (await findRide(info.ride_id))[0];
+  const mother = (await Users.findBy({ firebase_id: mother_id }))[0];
   if (
-    ride_status !== "waiting_for_driver" &&
+    ride_status !== "waiting_on_driver" &&
     driver_id !== info.requested_driver
   )
     return;
+  if (ride_status !== "waiting_on_driver") {
+    await db("rides")
+      .where({ id: info.ride_id })
+      .update({
+        ride_status: "waiting_on_driver"
+      });
+    await twilio.messages.create({
+      from: "+19179709371",
+      to: `${mother.phone}`,
+      body: `${
+        mother.name
+      }, Oh no! The driver you requested is unable to come to you. We will search for another driver and update you.`
+    });
+  }
   const updatedRejects = !!rejected_drivers
     ? [...rejected_drivers.rejects, info.requested_driver]
     : [info.requested_driver];
@@ -171,7 +190,6 @@ async function rejectionHandler(info) {
         rejected_drivers: rejectsJSON
       });
     // notify mother that there are no drivers
-    const mother = (await Users.findBy({ firebase_id: mother_id }))[0];
     await twilio.messages.create({
       from: "+19179709371",
       to: `${mother.phone}`,
@@ -193,7 +211,8 @@ async function rejectionHandler(info) {
       return false;
     })[0];
     if (!newDriver) {
-      return;
+      // all the drivers in the area have rejected or too high price, go to error condition
+      throw new Error("Drivers in area rejected or are too expensive.");
     } else {
       newDriver = newDriver.driver;
     }
@@ -207,6 +226,20 @@ async function rejectionHandler(info) {
     notifyDriver(newDriver.FCM_token, rideInfo);
   } catch (err) {
     console.log(err);
+    await twilio.messages.create({
+      from: "+19179709371",
+      to: `${mother.phone}`,
+      body: `${
+        mother.name
+      }, we were unable to coordinate a ride for you at this time. Please try again later or call <THE BACKUP HOTLINE>`
+    });
+    await db("rides")
+      .where({ id: info.ride_id })
+      .update({
+        // TODO: delete the ride? keeping it for now, easier when testing
+        driver_id: "driver0FIREBASE",
+        rejected_drivers: rejectsJSON
+      });
   }
 }
 

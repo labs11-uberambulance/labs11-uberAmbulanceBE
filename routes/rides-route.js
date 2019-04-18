@@ -74,7 +74,7 @@ router.get("/driver", (req, res) => {
       //     }
       //   });
       // rides = await Promise.all(rides);
-      console.log("GET /rides/driver : ", data);
+      // console.log("GET /rides/driver : ", data);
       res.status(200).json(data);
       // } catch (error) {
       //   console.log(error);
@@ -229,11 +229,15 @@ router.post("/driver/rejects/:ride_id", async (req, res, next) => {
   const { ride_id } = req.params;
   const driver_id = req.user.uid;
   const data = req.body.data;
-  const info = { ...data, requested_driver: driver_id };
+  const info = { ...data, requested_driver: driver_id, ride_id };
   console.log("driver directly rejected request ", data);
   try {
-    await Rides.rejectionHandler(info);
+    // first revert ride status (in case driver started ride but had to cancel)
+    // await db("rides")
+    //   .where({ id })
+    //   .update({ ride_status: "waiting_on_driver" });
     console.log("DONE");
+    await Rides.rejectionHandler(info);
     res.sendStatus(200);
   } catch (err) {
     console.log(err);
